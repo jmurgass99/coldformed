@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coldformedjm"
+version = "1.0.0"
+description = "Diseno de perfiles conformados en frio y secciones Clase 4 (EN 1993-1-3 y 1-5)."
+requires-python = ">=3.10"
+authors = [{ name = "jesusm" }]
+dependencies = ["numpy>=1.24",
+    "sectionproperties>=3.0", "jmstructural-common"]
+
+[project.optional-dependencies]
+ml = [
+    "scikit-learn>=1.3",  # metamodelo sustituto (surrogates.py) del pandeo elástico
+]
+test = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-timeout>=2.2",
+]
+api = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "pydantic>=2.5",
+]
+
+[tool.setuptools.packages.find]
+include = ["coldformedjm*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+    "unit: pruebas unitarias rapidas",
+    "integration: pruebas de integracion",
+    "api: pruebas de endpoints REST",
+    "slow: pruebas lentas (mesh + FEA con sectionproperties)",
+]
+
+[tool.coverage.run]
+source = ["coldformedjm"]
+branch = true
+omit = ["*/__pycache__/*", "*/_brand.py"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+fail_under = 70
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[tool.uv.sources]
+jmstructural-common = { workspace = true }
