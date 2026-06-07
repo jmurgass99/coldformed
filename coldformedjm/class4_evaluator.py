@@ -1,7 +1,63 @@
 """
 class4_evaluator.py - Effective width calculations for Class 4 sections.
+
+Factor de reduccion de ancho eficaz rho (Winter) segun EN 1993-1-5 §4.4 para
+PARTES INTERNAS comprimidas:
+
+    epsilon  = sqrt(235 / fy)
+    lambda_p = (b_bar / t) / (28.4 * epsilon * sqrt(k_sigma))
+    rho      = (lambda_p - 0.055 * (3 + psi)) / lambda_p**2   <= 1.0
+
+Anclado a WorkID W00777 (viga armada Clase 4, alma interna en flexion pura,
+psi=-1, k_sigma=23.9): rho = 0.69. Ver tests/test_winter_effective_width.py.
 """
 import math
+
+
+def plate_relative_slenderness(b_bar: float, t: float, fy: float,
+                               k_sigma: float) -> float:
+    """Esbeltez relativa de placa lambda_p (EN 1993-1-5 §4.4, ec. 4.3).
+
+    ``lambda_p = (b_bar / t) / (28.4 * epsilon * sqrt(k_sigma))`` con
+    ``epsilon = sqrt(235 / fy)``. Equivale a ``sqrt(fy / sigma_cr)`` ya que el
+    coeficiente 28.4 absorbe ``pi**2 * E / (12 * (1 - nu**2))`` para E=210000, nu=0.3.
+
+    Args:
+        b_bar: ancho de la parte plana comprimida del elemento [mm].
+        t: espesor [mm].
+        fy: limite elastico [MPa].
+        k_sigma: coeficiente de pandeo de placa segun psi y condicion de borde
+            (Tabla 4.1 partes internas / Tabla 4.2 voladizos de EN 1993-1-5).
+
+    Returns:
+        lambda_p (adimensional).
+    """
+    epsilon = math.sqrt(235.0 / fy)
+    return (b_bar / t) / (28.4 * epsilon * math.sqrt(k_sigma))
+
+
+def effective_width_factor_rho(lambda_p: float, psi: float) -> float:
+    """Factor de reduccion de ancho eficaz rho de Winter — partes internas.
+
+    EN 1993-1-5 §4.4, ec. (4.2):
+        rho = 1.0                                  si lambda_p <= 0.5 + sqrt(0.085 - 0.055*psi)
+        rho = (lambda_p - 0.055*(3 + psi)) / lambda_p**2   <= 1.0   en caso contrario
+
+    Args:
+        lambda_p: esbeltez relativa de placa (ver :func:`plate_relative_slenderness`).
+        psi: relacion de tensiones en los bordes del elemento (1.0 compresion
+            uniforme, -1.0 flexion pura). Afecta tanto al umbral como al termino
+            ``0.055*(3 + psi)`` — por eso un psi equivocado falsea rho.
+
+    Returns:
+        rho en (0, 1].
+    """
+    threshold = 0.5 + math.sqrt(max(0.085 - 0.055 * psi, 0.0))
+    if lambda_p <= threshold:
+        return 1.0
+    rho = (lambda_p - 0.055 * (3.0 + psi)) / (lambda_p ** 2)
+    return min(1.0, max(0.0, rho))
+
 
 class Class4Section:
     def __init__(self, b: float, h: float, t: float, f_y: float = 355.0):
@@ -47,26 +103,19 @@ class Class4Section:
             I_y = (self.b * self.h**3) / 12.0 - ((self.b - self.t) * (self.h - 2*self.t)**3) / 12.0
             return (I_y / (self.h / 2.0)) / 1000.0 # cm3
             
-        # For class 4, we reduce the web and flange widths
-        # Simplified winter formula approach
-        eps = self.calculate_epsilon()
-        
-        # Flange reduction (rho_f)
-        lambda_p_f = (self.b / self.t) / (28.4 * eps * math.sqrt(4.0)) # approx k_sigma = 4.0
-        rho_f = 1.0
-        if lambda_p_f > 0.673:
-            rho_f = (lambda_p_f - 0.055 * (3.0 + 1)) / (lambda_p_f**2)
-            rho_f = min(1.0, max(0.0, rho_f))
-            
+        # For class 4, we reduce the web and flange widths via the Winter factor
+        # rho (EN 1993-1-5 §4.4). Each element carries its own psi and k_sigma:
+        #   - flange in uniform compression: psi = +1, k_sigma = 4.0
+        #   - web in pure bending:           psi = -1, k_sigma = 23.9
+        # NOTE: el termino 0.055*(3+psi) depende de psi; usar psi=+1 para el alma
+        # (flexion pura, psi=-1) subestimaba rho_w. Anclado a W00777 (rho_w=0.69).
+        lambda_p_f = plate_relative_slenderness(self.b, self.t, self.f_y, k_sigma=4.0)
+        rho_f = effective_width_factor_rho(lambda_p_f, psi=1.0)
         b_eff = rho_f * self.b
-        
-        # Web reduction (rho_w) under pure bending
-        lambda_p_w = (self.h / self.t) / (28.4 * eps * math.sqrt(23.9)) # approx k_sigma = 23.9
-        rho_w = 1.0
-        if lambda_p_w > 0.673:
-            rho_w = (lambda_p_w - 0.055 * (3.0 + 1)) / (lambda_p_w**2)
-            rho_w = min(1.0, max(0.0, rho_w))
-            
+
+        # Web reduction (rho_w) under pure bending (psi = -1).
+        lambda_p_w = plate_relative_slenderness(self.h, self.t, self.f_y, k_sigma=23.9)
+        rho_w = effective_width_factor_rho(lambda_p_w, psi=-1.0)
         h_eff = rho_w * self.h
         
         # Approximate effective inertia
