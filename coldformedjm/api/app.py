@@ -30,7 +30,7 @@ def create_router() -> Any:
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    @router.post("/api/coldformed/section")
+    @router.post("/api/coldformed/section", summary="Propiedades efectivas y pandeo local de perfiles conformados en frío según AISI S100 / EN 1993-1-3")
     def section(payload: SectionPayload) -> dict[str, Any]:
         try:
             result = evaluate_section(
