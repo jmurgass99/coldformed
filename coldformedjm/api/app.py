@@ -26,7 +26,7 @@ def create_router() -> Any:
 
     router = APIRouter()
 
-    @router.get("/health")
+    @router.get("/api/coldformed/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
 

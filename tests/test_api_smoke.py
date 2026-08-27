@@ -19,7 +19,7 @@ def client() -> TestClient:
 
 
 def test_health_endpoint(client: TestClient):
-    r = client.get("/health")
+    r = client.get("/api/coldformed/health")
     assert r.status_code == 200
     assert r.json() == {"status": "ok"}
 
@@ -47,4 +47,4 @@ def test_create_router_exposes_routes(client: TestClient):
     router = create_router()
     paths = {r.path for r in router.routes if hasattr(r, "path")}
     assert "/api/coldformed/section" in paths
-    assert "/health" in paths
+    assert "/api/coldformed/health" in paths
