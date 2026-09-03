@@ -19,10 +19,7 @@ class SectionPayload(BaseModel):
 
 def create_router() -> Any:
     """Devuelve el APIRouter con los endpoints. Mountable en gateway."""
-    from fastapi import APIRouter, HTTPException
-
-    from ..exceptions import ValidationError
-    from ..services import SectionInput, evaluate_section
+    from fastapi import APIRouter
 
     router = APIRouter()
 
@@ -32,6 +29,10 @@ def create_router() -> Any:
 
     @router.post("/api/coldformed/section", summary="Propiedades efectivas y pandeo local de perfiles conformados en frío según AISI S100 / EN 1993-1-3")
     def section(payload: SectionPayload) -> dict[str, Any]:
+        from fastapi import HTTPException
+        from ..exceptions import ValidationError
+        from ..services.section_service import SectionInput, evaluate_section
+
         try:
             result = evaluate_section(
                 SectionInput(b=payload.b, h=payload.h, t=payload.t, f_y=payload.f_y)
