@@ -25,6 +25,7 @@ Para flexión:
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from math import sqrt
 from typing import Any
 
@@ -59,6 +60,13 @@ class DSMFlexureResult:
 
 
 def dsm_flexure(inp: DSMFlexureInput) -> DSMFlexureResult:
+    if min(inp.Mcrl_kNm, inp.Mcrd_kNm, inp.Mcre_kNm) <= 0.0 or not all(
+        math.isfinite(x) for x in (inp.Mcrl_kNm, inp.Mcrd_kNm, inp.Mcre_kNm)
+    ):
+        raise ValueError(
+            f"Momentos críticos de pandeo deben ser estrictamente positivos y finitos: "
+            f"Mcrl={inp.Mcrl_kNm}, Mcrd={inp.Mcrd_kNm}, Mcre={inp.Mcre_kNm}"
+        )
     My = inp.Sf_mm3 * inp.Fy_MPa / 1e6  # kN·m
     # Mne (global)
     if inp.Mcre_kNm >= 2.78 * My:
@@ -108,6 +116,13 @@ class DSMCompressionInput:
 
 
 def dsm_compression(inp: DSMCompressionInput) -> dict[str, Any]:
+    if min(inp.Pcrl_kN, inp.Pcrd_kN, inp.Pcre_kN) <= 0.0 or not all(
+        math.isfinite(x) for x in (inp.Pcrl_kN, inp.Pcrd_kN, inp.Pcre_kN)
+    ):
+        raise ValueError(
+            f"Cargas críticas de pandeo deben ser estrictamente positivas y finitas: "
+            f"Pcrl={inp.Pcrl_kN}, Pcrd={inp.Pcrd_kN}, Pcre={inp.Pcre_kN}"
+        )
     Py = inp.A_mm2 * inp.Fy_MPa / 1000.0  # kN
     # Pne (global)
     lam_c = sqrt(Py / max(inp.Pcre_kN, 1e-9))

@@ -24,6 +24,14 @@ class TestDSMFlexure:
         assert r.governing_mode == "local"
         assert r.Mn_kNm < r.My_kNm
 
+    @pytest.mark.parametrize("bad_val", [0.0, -10.0, float("nan")])
+    def test_rejects_non_positive_or_nan_mcrl(self, bad_val):
+        with pytest.raises(ValueError, match="estrictamente positivos y finitos"):
+            dsm_flexure(DSMFlexureInput(
+                Mcrl_kNm=bad_val, Mcrd_kNm=200.0, Mcre_kNm=200.0,
+                Sf_mm3=200_000,
+            ))
+
 
 class TestDSMCompression:
     def test_compact(self):
@@ -31,6 +39,13 @@ class TestDSMCompression:
             Pcrl_kN=2000, Pcrd_kN=2000, Pcre_kN=2000, A_mm2=1000,
         ))
         assert r["Pn_kN"] > 0
+
+    @pytest.mark.parametrize("bad_val", [0.0, -50.0, float("nan")])
+    def test_rejects_non_positive_or_nan_pcrd(self, bad_val):
+        with pytest.raises(ValueError, match="estrictamente positivas y finitas"):
+            dsm_compression(DSMCompressionInput(
+                Pcrl_kN=2000.0, Pcrd_kN=bad_val, Pcre_kN=2000.0, A_mm2=1000.0,
+            ))
 
 
 class TestCatalog:

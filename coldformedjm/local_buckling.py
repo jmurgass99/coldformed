@@ -239,6 +239,9 @@ def local_critical_stress_fsm(
             best = lam       # sigma_cr = lam * sigma_ref, sigma_ref = 1.0
             i_best = i
 
+    if best == float("inf") or not (best > 0.0) or not np.isfinite(best):
+        raise RuntimeError(f"FSM no encontró un autovalor positivo o finito (best={best})")
+
     # Integridad de rejilla alrededor del minimo retenido (ver docstring).
     lost_neighbours = [
         j for j in (i_best - 1, i_best + 1)
