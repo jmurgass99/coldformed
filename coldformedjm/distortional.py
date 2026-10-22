@@ -93,6 +93,7 @@ class DistortionalResultAISI:
     """Resultado del cálculo distorsional según AISI S100 (DSM)."""
     standard: str = "AISI S100-16/22"
     method: str = "Direct Strength Method (DSM)"
+    units: dict[str, str] = field(default_factory=lambda: {"force": "kN", "moment": "kNm", "stress": "MPa", "length": "mm"})
     sigma_crd_MPa: float = 0.0
     L_crd_mm: float = 0.0
     # Compresión
@@ -115,6 +116,7 @@ class DistortionalResultAISI:
         return {
             "standard": self.standard,
             "method": self.method,
+            "units": dict(self.units),
             "sigma_crd_MPa": self.sigma_crd_MPa,
             "L_crd_mm": self.L_crd_mm,
             "Pnd_kN": self.Pnd_kN,
@@ -131,6 +133,7 @@ class DistortionalResultEC3:
     """Resultado del cálculo distorsional según EN 1993-1-3 §5.5.3 (EWM)."""
     standard: str = "EN 1993-1-3:2006"
     method: str = "Effective Width Method (EWM §5.5.3 Edge Stiffener)"
+    units: dict[str, str] = field(default_factory=lambda: {"force": "kN", "moment": "kNm", "stress": "MPa", "length": "mm"})
     K_spring_N_per_mm2: float = 0.0
     As_eff_mm2: float = 0.0
     Is_eff_mm4: float = 0.0
@@ -150,6 +153,7 @@ class DistortionalResultEC3:
         return {
             "standard": self.standard,
             "method": self.method,
+            "units": dict(self.units),
             "K_spring_N_per_mm2": self.K_spring_N_per_mm2,
             "sigma_cr_s_MPa": self.sigma_cr_s_MPa,
             "lambda_bar_d": self.lambda_bar_d,
