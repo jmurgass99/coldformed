@@ -35,23 +35,39 @@ class CFShape:
         }
 
 
-def channel(h: float, b: float, t: float, name: str = "C") -> CFShape:
-    """Perfil C (canal) cold-formed."""
-    pts = [
-        (0, 0), (b, 0), (b, t), (t, t),
-        (t, h - t), (b, h - t), (b, h), (0, h),
-    ]
+def channel(h: float, b: float, t: float, lip: float = 0.0, name: str = "C") -> CFShape:
+    """Perfil C (canal con o sin pestaña/labio) cold-formed."""
+    if lip <= 0.0:
+        pts = [
+            (0, 0), (b, 0), (b, t), (t, t),
+            (t, h - t), (b, h - t), (b, h), (0, h),
+        ]
+    else:
+        pts = [
+            (0, 0), (b, 0), (b, lip), (b - t, lip), (b - t, t), (t, t),
+            (t, h - t), (b - t, h - t), (b - t, h - lip), (b, h - lip),
+            (b, h), (0, h),
+        ]
     return CFShape(name=name, points_mm=pts, thickness_mm=t)
 
 
 def z_section(h: float, b_top: float, b_bot: float, t: float,
+              lip_top: float = 0.0, lip_bot: float = 0.0,
               name: str = "Z") -> CFShape:
-    """Perfil Z (alas opuestas)."""
-    pts = [
-        (-b_bot, 0), (0, 0), (0, h), (b_top, h),
-        (b_top, h - t), (t, h - t), (t, t),
-        (-b_bot, t),
-    ]
+    """Perfil Z (alas opuestas con o sin pestaña/labio)."""
+    if lip_top <= 0.0 and lip_bot <= 0.0:
+        pts = [
+            (-b_bot, 0), (0, 0), (0, h), (b_top, h),
+            (b_top, h - t), (t, h - t), (t, t),
+            (-b_bot, t),
+        ]
+    else:
+        pts = [
+            (-b_bot, lip_bot), (-b_bot, 0), (0, 0), (0, h),
+            (b_top, h), (b_top, h - lip_top), (b_top - t, h - lip_top),
+            (b_top - t, h - t), (t, h - t), (t, t),
+            (-b_bot + t, t), (-b_bot + t, lip_bot),
+        ]
     return CFShape(name=name, points_mm=pts, thickness_mm=t)
 
 

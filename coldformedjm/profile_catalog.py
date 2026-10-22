@@ -62,9 +62,9 @@ def to_cf_shape(profile_name: str):
         raise KeyError(f"Perfil '{profile_name}' no existe")
     from .sap_section_bridge import channel, sigma_section, z_section
     if p.shape == "C":
-        return channel(h=p.h_mm, b=p.b_mm, t=p.t_mm, name=p.name)
+        return channel(h=p.h_mm, b=p.b_mm, t=p.t_mm, lip=p.lip_mm, name=p.name)
     if p.shape == "Z":
-        return z_section(h=p.h_mm, b_top=p.b_mm, b_bot=p.b_mm, t=p.t_mm, name=p.name)
+        return z_section(h=p.h_mm, b_top=p.b_mm, b_bot=p.b_mm, t=p.t_mm, lip_top=p.lip_mm, lip_bot=p.lip_mm, name=p.name)
     return sigma_section(h=p.h_mm, b=p.b_mm, lip=p.lip_mm, t=p.t_mm, name=p.name)
 
 
