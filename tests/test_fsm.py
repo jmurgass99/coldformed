@@ -1,8 +1,8 @@
-"""Tests para coldformedjm.fsm — Finite Strip Method base."""
+"""Tests para coldformed.fsm — Finite Strip Method base."""
 import numpy as np
 import pytest
 
-from coldformedjm.fsm import (
+from coldformed.fsm import (
     FiniteStripMethod,
     PLATE_K,
     PlateBucklingInput,

@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from coldformedjm.local_buckling import (
+from coldformed.local_buckling import (
     LocalBucklingResult,
     assemble_strip_matrices_jit,
     local_critical_stress,

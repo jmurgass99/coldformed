@@ -4,8 +4,8 @@ import math
 
 import pytest
 
-from coldformedjm.web_crippling import web_crippling_strength, COEFF_SETS, PHI_WC
-from coldformedjm.torsion_open import (
+from coldformed.web_crippling import web_crippling_strength, COEFF_SETS, PHI_WC
+from coldformed.torsion_open import (
     torsion_constant_J,
     st_venant_shear_stress,
     warping_constant_channel,

@@ -1,4 +1,4 @@
-"""Tests para coldformedjm.surrogates — metamodelo sustituto del FSM.
+"""Tests para coldformed.surrogates — metamodelo sustituto del FSM.
 
 Todos los tests son deterministas (semilla fija) y usan un dataset pequeño
 para que la ejecución sea rápida.
@@ -6,8 +6,8 @@ para que la ejecución sea rápida.
 import numpy as np
 import pytest
 
-from coldformedjm.fsm import PlateBucklingInput, plate_critical_stress
-from coldformedjm.surrogates import (
+from coldformed.fsm import PlateBucklingInput, plate_critical_stress
+from coldformed.surrogates import (
     FEATURE_NAMES,
     PlateBucklingSurrogate,
     SurrogateMetrics,

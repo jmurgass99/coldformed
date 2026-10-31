@@ -23,7 +23,7 @@ try:
 except ImportError:
     _HAS_SECTPROPS = False
 
-log = logging.getLogger("coldformedjm.sectprops_wrapper")
+log = logging.getLogger("coldformed.sectprops_wrapper")
 
 
 @dataclass

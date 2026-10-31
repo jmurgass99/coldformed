@@ -2,7 +2,7 @@
 
 Motor minimo para pandeo elastico local de placas (Bryan / Timoshenko).
 La version completa con multiples franjas y conectividad transversal vive
-en `coldformedjm.fsm`; este modulo conserva la API "seed" de IEG 3120 para
+en `coldformed.fsm`; este modulo conserva la API "seed" de IEG 3120 para
 uso docente / quick-look y como referencia historica de integracion.
 """
 from __future__ import annotations
@@ -48,7 +48,7 @@ class FiniteStripMethodSeed:
 
     def build_geometric_stiffness_matrix(self, strip_nodes: List[float]) -> np.ndarray:
         """Stub: matriz K_G placeholder hasta integracion con `fsm.py` completo."""
-        # TODO: integrar con coldformedjm.fsm.build_geometric_stiffness_matrix
+        # TODO: integrar con coldformed.fsm.build_geometric_stiffness_matrix
         return np.eye(4)
 
 

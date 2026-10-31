@@ -1,4 +1,4 @@
-"""Configuracion comun de pytest para ColdFormedJm."""
+"""Configuracion comun de pytest para ColdFormed."""
 from __future__ import annotations
 
 import sys

@@ -1,7 +1,7 @@
 """Tests para iteración de propiedades efectivas (gotcha #18)."""
 import pytest
 
-from coldformedjm.effective_iter import (
+from coldformed.effective_iter import (
     EffectiveIterInput,
     _b_eff_aisi,
     iterate_effective,

@@ -6,7 +6,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 import time
-from coldformedjm.fsm_jit import fsm_local_stiffness_matrices_jit
+from coldformed.fsm_jit import fsm_local_stiffness_matrices_jit
 
 def test_fsm_numba_ke_kg_dimensions_and_properties():
     # Parámetros realistas de una faja elástica de acero

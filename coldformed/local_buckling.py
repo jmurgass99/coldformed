@@ -3,7 +3,7 @@
 
 ENGINE DE PRODUCCION: solucion analitica de Bryan/Timoshenko
     sigma_cr = k · pi^2 · D / (b^2 · t),   D = E·t^3 / (12·(1-nu^2))
-con el factor k segun la condicion de borde (``PLATE_K`` en :mod:`coldformedjm.fsm`):
+con el factor k segun la condicion de borde (``PLATE_K`` en :mod:`coldformed.fsm`):
 ``ss_ss`` (alma interna) k=4.0, ``ss_free`` (ala en voladizo) k=0.425.
 
 ENGINE FSM JIT (recalibrado, Fase 9): :func:`local_critical_stress_fsm` ensambla

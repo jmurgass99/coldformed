@@ -1,4 +1,4 @@
-"""coldformedjm.distortional — Pandeo Distorsional para perfiles C y Z.
+"""coldformed.distortional — Pandeo Distorsional para perfiles C y Z.
 
 Implementa y separa inequívocamente:
 1. Método AISI S100-16 / S100-22 (Direct Strength Method - DSM):

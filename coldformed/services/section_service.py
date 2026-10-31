@@ -1,6 +1,6 @@
 """Servicio de evaluacion de secciones Clase 4.
 
-Envuelve :class:`coldformedjm.class4_evaluator.Class4Section` con funciones
+Envuelve :class:`coldformed.class4_evaluator.Class4Section` con funciones
 puras tipadas, validacion y dataclasses serializables.
 """
 from __future__ import annotations

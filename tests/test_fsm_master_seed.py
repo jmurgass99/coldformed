@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from coldformedjm.fsm_master_seed import FiniteStripMethodSeed
+from coldformed.fsm_master_seed import FiniteStripMethodSeed
 
 
 def test_plate_critical_stress_known_value():

@@ -39,7 +39,7 @@ import math
 
 import pytest
 
-from coldformedjm.class4_evaluator import (
+from coldformed.class4_evaluator import (
     effective_width_factor_rho,
     plate_relative_slenderness,
 )

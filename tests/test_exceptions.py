@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from coldformedjm.exceptions import (
+from coldformed.exceptions import (
     ColdFormedError,
     GeometryError,
     MaterialError,

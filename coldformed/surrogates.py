@@ -3,7 +3,7 @@ Metamodelo sustituto (AI surrogate) para el esfuerzo crítico de pandeo
 elástico de placas.
 
 Este módulo entrena un regresor de scikit-learn que aprende a reproducir el
-mapa físico calculado por el FSM (:func:`coldformedjm.fsm.plate_critical_stress`)
+mapa físico calculado por el FSM (:func:`coldformed.fsm.plate_critical_stress`)
 a partir de las dimensiones y propiedades de la placa. Una vez entrenado, el
 surrogate evalúa σ_cr de forma vectorizada (lote completo en una sola llamada),
 mucho más rápido que invocar el FSM punto a punto cuando hay que barrer
@@ -44,7 +44,7 @@ from typing import Mapping, Sequence
 
 import numpy as np
 
-from coldformedjm.fsm import PLATE_K, PlateBucklingInput, plate_critical_stress
+from coldformed.fsm import PLATE_K, PlateBucklingInput, plate_critical_stress
 
 try:
     from sklearn.compose import TransformedTargetRegressor
@@ -89,12 +89,12 @@ def build_dataset(n_samples: int = 400, seed: int = 0) -> tuple[np.ndarray, np.n
     """Genera un dataset (X, y) muestreando inputs físicos y evaluando el FSM.
 
     Se muestrean aleatoriamente, de forma uniforme e independiente, los
-    parámetros de :class:`~coldformedjm.fsm.PlateBucklingInput` dentro de los
+    parámetros de :class:`~coldformed.fsm.PlateBucklingInput` dentro de los
     rangos documentados en :data:`SAMPLING_RANGES`. La condición de borde se
     elige uniformemente entre las claves de
-    :data:`~coldformedjm.fsm.PLATE_K`; el coeficiente ``k`` resultante se usa
+    :data:`~coldformed.fsm.PLATE_K`; el coeficiente ``k`` resultante se usa
     como feature. Para cada muestra se llama a
-    :func:`~coldformedjm.fsm.plate_critical_stress` (ground truth) y se toma
+    :func:`~coldformed.fsm.plate_critical_stress` (ground truth) y se toma
     ``sigma_cr_MPa`` como target.
 
     Args:
@@ -234,7 +234,7 @@ class PlateBucklingSurrogate:
     """Envoltura de inferencia sobre el pipeline de surrogate entrenado.
 
     Acepta features como ``dict`` (claves en :data:`FEATURE_NAMES`), como
-    objeto :class:`~coldformedjm.fsm.PlateBucklingInput`, o como array/lista
+    objeto :class:`~coldformed.fsm.PlateBucklingInput`, o como array/lista
     numérica (un punto 1-D o un lote 2-D), y devuelve el esfuerzo crítico de
     pandeo estimado σ_cr en MPa.
 
@@ -307,7 +307,7 @@ class PlateBucklingSurrogate:
 
         Args:
             features: un ``dict`` con claves :data:`FEATURE_NAMES`, un
-                :class:`~coldformedjm.fsm.PlateBucklingInput`, un array 1-D
+                :class:`~coldformed.fsm.PlateBucklingInput`, un array 1-D
                 (un punto) o un array 2-D ``(n, n_features)`` (lote).
 
         Returns:

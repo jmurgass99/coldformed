@@ -1,8 +1,8 @@
 """Tests signature curve + galvanizing."""
 import pytest
 
-from coldformedjm.signature_curve import SignatureInput, signature_curve
-from coldformedjm.galvanizing import (
+from coldformed.signature_curve import SignatureInput, signature_curve
+from coldformed.galvanizing import (
     adjusted_yield, coating_thickness_required_iso1461,
 )
 

@@ -1,4 +1,4 @@
-"""coldformedjm.tests.test_distortional_cz_multicode
+"""coldformed.tests.test_distortional_cz_multicode
 =================================================
 Validación rigurosa de pandeo distorsional para perfiles C y Z conformados en frío:
 - Método Direct Strength Method (DSM) según AISI S100-16/22 (§E3, §F3)
@@ -12,7 +12,7 @@ from __future__ import annotations
 import math
 import pytest
 
-from coldformedjm.distortional import (
+from coldformed.distortional import (
     SectionGeometryCZ,
     DistortionalResultAISI,
     DistortionalResultEC3,
@@ -21,7 +21,7 @@ from coldformedjm.distortional import (
     check_aisi_dsm_applicability,
     check_ec3_applicability,
 )
-from coldformedjm.codes_multi import design_capacity_cz, code_description
+from coldformed.codes_multi import design_capacity_cz, code_description
 
 
 # ---------------------------------------------------------------------------

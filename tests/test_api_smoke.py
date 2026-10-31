@@ -1,4 +1,4 @@
-"""Smoke tests del endpoint HTTP de ColdFormedJm.
+"""Smoke tests del endpoint HTTP de ColdFormed.
 
 Razón de existir: previene la regresión del bug `from __future__ import
 annotations` + Pydantic local que hacía que FastAPI tratara el body como
@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from coldformedjm.api.app import create_app, create_router
+from coldformed.api.app import create_app, create_router
 
 
 @pytest.fixture

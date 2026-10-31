@@ -1,6 +1,6 @@
 """Tests para reducción por perforaciones."""
 import pytest
-from coldformedjm.perforations import HoleSpec, reduce_for_holes, Pn_with_holes
+from coldformed.perforations import HoleSpec, reduce_for_holes, Pn_with_holes
 
 
 def test_no_holes_no_reduction():

@@ -1,4 +1,4 @@
-"""Memorias de cálculo handcalcs para ColdFormedJm."""
+"""Memorias de cálculo handcalcs para ColdFormed."""
 from .aisi_effective_width import (
     EffectiveWidthMemoInput,
     EffectiveWidthMemoResult,

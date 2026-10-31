@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 sp = pytest.importorskip("sectionproperties")
-from coldformedjm.sectprops_wrapper import (
+from coldformed.sectprops_wrapper import (
     SectionProperties,
     analyze_i_section, analyze_channel_section, analyze_hollow_rect_section,
 )

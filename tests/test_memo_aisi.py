@@ -1,7 +1,7 @@
 """Tests para memoria AISI effective width."""
 import pytest
 
-from coldformedjm.memos import (
+from coldformed.memos import (
     EffectiveWidthMemoInput,
     render_effective_width_memo,
 )

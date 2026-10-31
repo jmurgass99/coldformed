@@ -1,4 +1,4 @@
-"""Servicio FSM para ColdFormedJm."""
+"""Servicio FSM para ColdFormed."""
 from __future__ import annotations
 
 from ..fsm import (

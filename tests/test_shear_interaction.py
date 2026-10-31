@@ -4,8 +4,8 @@ import math
 
 import pytest
 
-from coldformedjm.shear import ShearInput, shear_capacity
-from coldformedjm.interaction import bending_shear, axial_bending
+from coldformed.shear import ShearInput, shear_capacity
+from coldformed.interaction import bending_shear, axial_bending
 
 
 class TestShear:

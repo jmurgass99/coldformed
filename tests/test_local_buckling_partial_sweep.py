@@ -25,8 +25,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import coldformedjm.local_buckling as lb
-from coldformedjm.local_buckling import (
+import coldformed.local_buckling as lb
+from coldformed.local_buckling import (
     local_critical_stress,
     local_critical_stress_fsm,
 )

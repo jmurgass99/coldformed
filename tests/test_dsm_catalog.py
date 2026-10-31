@@ -1,10 +1,10 @@
 """Tests DSM + catálogo perfiles."""
 import pytest
 
-from coldformedjm.direct_strength import (
+from coldformed.direct_strength import (
     DSMFlexureInput, dsm_flexure, DSMCompressionInput, dsm_compression,
 )
-from coldformedjm.profile_catalog import lookup, list_profiles, to_cf_shape
+from coldformed.profile_catalog import lookup, list_profiles, to_cf_shape
 
 
 class TestDSMFlexure:

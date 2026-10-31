@@ -1,7 +1,7 @@
 """Tests ColdFormed multi-código."""
 import pytest
 
-from coldformedjm.codes_multi import (
+from coldformed.codes_multi import (
     code_description, design_resistance_compression, design_resistance_flexure,
 )
 

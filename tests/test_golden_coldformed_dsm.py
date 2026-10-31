@@ -1,5 +1,5 @@
 """
-test_golden_coldformed_dsm.py — Golden Tests para ColdFormedJm
+test_golden_coldformed_dsm.py — Golden Tests para ColdFormed
 ==============================================================
 Verificaciones contra teoría de placas y Direct Strength Method:
 
@@ -13,8 +13,8 @@ from __future__ import annotations
 import math
 import pytest
 
-from coldformedjm.direct_strength import DSMFlexureInput, dsm_flexure
-from coldformedjm.local_buckling import local_critical_stress
+from coldformed.direct_strength import DSMFlexureInput, dsm_flexure
+from coldformed.local_buckling import local_critical_stress
 
 
 class TestGoldenColdFormedDSM:

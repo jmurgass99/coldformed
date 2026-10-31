@@ -1,93 +1,87 @@
-# ColdFormedJm
+# coldformed
 
-Diseno de acero conformado en frio
+Diseño de acero conformado en frío y secciones de Clase 4: ancho eficaz (EN 1993-1-5 §4.4), Método de la Resistencia Directa (AISI S100), pandeo distorsional (AISI y EN 1993-1-3), método de las franjas finitas (FSM) con Numba, interacción, aplastamiento del alma y catálogo de perfiles.
 
-[![CI](https://github.com/jmurgass99/coldformedjm/actions/workflows/ci.yml/badge.svg)](https://github.com/jmurgass99/coldformedjm/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-75.65%25-green?style=flat)](https://github.com/jmurgass99/coldformedjm)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-Proprietary-red)]()
+[![CI](https://github.com/jmurgass99/coldformed/actions/workflows/ci.yml/badge.svg)](https://github.com/jmurgass99/coldformed/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## Overview
+Paquete independiente. Dependencias: `numpy`, `scipy`, `numba` y `sectionproperties`.
 
-Diseno de acero conformado en frio. Parte del ecosistema **jmurgass99** de herramientas de ingenieria estructural.
-
-## Installation
+## Instalación
 
 ```bash
-git clone https://github.com/jmurgass99/coldformedjm.git
-cd coldformedjm
-pip install -e .
-# Optional extras:
-pip install -e ".[test,api]"
+pip install git+https://github.com/jmurgass99/coldformed.git
 ```
 
-## Quick start
+Extras: `api` (REST con FastAPI), `ml` (metamodelo sustituto del pandeo elástico con scikit-learn), `test`.
+
+```bash
+git clone https://github.com/jmurgass99/coldformed.git
+cd coldformed
+pip install -e ".[test,api,ml]"
+pytest -q
+```
+
+## Inicio rápido
+
+### Ancho eficaz de una placa interna comprimida (EN 1993-1-5 §4.4)
+
+Alma de viga armada en flexión pura (ψ = −1, k_σ = 23,9), ejemplo anclado al trabajo W00777.
 
 ```python
-from coldformedjm import *  # see examples/ for usage
+from coldformed.class4_evaluator import plate_relative_slenderness, effective_width_factor_rho
+
+lam_p = plate_relative_slenderness(b_bar=1500.0, t=10.0, fy=355.0, k_sigma=23.9)
+rho = effective_width_factor_rho(lam_p, psi=-1.0)
+print(round(lam_p, 3), round(rho, 2))   # 1.328  0.69
 ```
 
-## REST API (if available)
-
-```bash
-uvicorn coldformedjm.api.app:app --reload
-# Open http://localhost:8000/docs
-```
-
-## Testing
-
-```bash
-pytest -q                                # quick suite
-pytest -m "not slow"                     # exclude slow tests
-.\scripts\run_coverage.ps1               # coverage with gate
-```
-
-## Project structure
-
-```
-coldformedjm/
-  services/       # service layer (pure functions)
-  api/            # FastAPI app (REST endpoints)
-  exceptions.py   # typed exception hierarchy
-  _brand.py       # brand constants
-tests/            # pytest suite
-```
-
-## Ecosystem
-
-This project is part of the **jmurgass99 structural engineering ecosystem**:
-
-- [fastsap](https://github.com/jmurgass99/fastsap) - orquestador SAP2000/ETABS
-- [dynamicsjmpro](https://github.com/jmurgass99/dynamicsjmpro) - SaaS frontend + backend
-- [dynamicsjm](https://github.com/jmurgass99/dynamicsjm) - motor dinamico
-- [foundationdesignjm](https://github.com/jmurgass99/foundationdesignjm) - cimentaciones
-- [windloadjm](https://github.com/jmurgass99/windloadjm) - cargas de viento
-- [seismicrecordsjm](https://github.com/jmurgass99/seismicrecordsjm) - records sismicos
-- [slopestabilityjm](https://github.com/jmurgass99/slopestabilityjm) - estabilidad de taludes
-- [steelconnectionjm](https://github.com/jmurgass99/steelconnectionjm) - conexiones de acero
-- [steeloptimizerjm](https://github.com/jmurgass99/steeloptimizerjm) - optimizacion GA
-- [coldformedjm](https://github.com/jmurgass99/coldformedjm) - acero conformado en frio
-- [fatiguejm](https://github.com/jmurgass99/fatiguejm) - analisis de fatiga
-- [firesteeljm](https://github.com/jmurgass99/firesteeljm) - analisis termico al fuego
-- [dxfstructuraljm](https://github.com/jmurgass99/dxfstructuraljm) - generacion DXF
-
-
-## Master IEG Integrations
-
-Modulo `coldformedjm.fsm_master_seed` (integrado 2026-05-19 desde
-`NEW CODES/STRUCTURAL/Master_IEG_Integrations/cold_formed_fsm.py`):
-
-- `FiniteStripMethodSeed` — FSM-base (IEG 3120) con la solucion cerrada
-  de Bryan/Timoshenko para pandeo elastico local de placa simple.
-  Convive con `coldformedjm.fsm` (version full con multiples franjas);
-  esta semilla se mantiene como referencia docente / quick-look.
+### Tensión crítica de pandeo local de una placa (franja finita, solución de Bryan)
 
 ```python
-from coldformedjm.fsm_master_seed import FiniteStripMethodSeed
+from coldformed.fsm_master_seed import FiniteStripMethodSeed
+
 fsm = FiniteStripMethodSeed()
-fcr = fsm.calculate_plate_critical_stress(width=200, thickness=2)
+f_cr = fsm.calculate_plate_critical_stress(width=200, thickness=2)   # ≈ 72.3 MPa
 ```
 
-## License
+### Método de la Resistencia Directa (AISI S100) en flexión
 
-Proprietary - (c) 2026 jmurgass99. All rights reserved.
+```python
+from coldformed.direct_strength import DSMFlexureInput, dsm_flexure
+
+res = dsm_flexure(DSMFlexureInput(Mcrl_kNm=9.0, Mcrd_kNm=10.5, Mcre_kNm=30.0, Sf_mm3=34000.0, Fy_MPa=350.0))
+print(res.Mn_kNm, res.governing_mode)   # momento resistente nominal y modo que gobierna
+```
+
+## Módulos
+
+| Módulo | Contenido |
+|---|---|
+| `class4_evaluator` | Esbeltez relativa de placa y factor ρ de Winter (EN 1993-1-5) |
+| `effective_iter` | Iteración de ancho eficaz (AISI, EWM) |
+| `direct_strength` | DSM en flexión y compresión (AISI S100) |
+| `distortional` | Pandeo distorsional de C y Z según AISI y EN 1993-1-3 |
+| `local_buckling`, `fsm`, `fsm_assembly`, `fsm_jit` | Tensión crítica local por franjas finitas, con ensamblaje acelerado con Numba |
+| `signature_curve` | Curva de firma (local, distorsional, global) |
+| `interaction`, `shear`, `web_crippling`, `torsion_open`, `perforations` | Verificaciones complementarias |
+| `profile_catalog`, `galvanizing`, `cost_estimator` | Catálogo de perfiles, recubrimiento y coste |
+| `surrogates` | Metamodelo sustituto del pandeo elástico (extra `ml`) |
+| `sectprops_wrapper` | Propiedades de sección con `sectionproperties` |
+| `codes_multi` | Despacho multinorma (EN 1993-1-3, AISI S100) |
+| `api/` | REST API con FastAPI (extra `api`) |
+
+El módulo `sap_section_bridge` exporta la geometría a SAP2000 solo si el cliente `fastsap` está instalado; sin él devuelve `False` sin lanzar error.
+
+## Validación
+
+El factor ρ está anclado a un ejemplo resuelto de viga armada de Clase 4 (ρ = 0,69); las pruebas de pandeo distorsional comprueban las condiciones de aplicabilidad de AISI y EN 1993-1-3; los tests de FSM comparan la solución de franjas con la solución cerrada de Bryan/Timoshenko. Consulta `docs/` para el alcance de lo verificado.
+
+## Licencia
+
+MIT. Consulta [LICENSE](LICENSE).
+
+---
+
+Parte del toolkit estructural de código abierto **Loadpath**, de [Jesús Murgas](https://github.com/jmurgass99).

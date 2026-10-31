@@ -1,4 +1,4 @@
-"""Jerarquia de excepciones de ColdFormedJm.
+"""Jerarquia de excepciones de ColdFormed.
 
 Todas las excepciones del paquete heredan de :class:`ColdFormedError` para
 facilitar el manejo agrupado por consumidores externos (REST, CLI, GUI).
@@ -7,7 +7,7 @@ from __future__ import annotations
 
 
 class ColdFormedError(Exception):
-    """Excepcion base para todos los errores del paquete ColdFormedJm."""
+    """Excepcion base para todos los errores del paquete ColdFormed."""
 
 
 class ValidationError(ColdFormedError):

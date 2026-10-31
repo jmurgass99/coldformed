@@ -1,10 +1,10 @@
-"""Tests for coldformedjm.fsm_assembly -- multi-strip FSM assembly."""
+"""Tests for coldformed.fsm_assembly -- multi-strip FSM assembly."""
 from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from coldformedjm.fsm_assembly import (
+from coldformed.fsm_assembly import (
     StripDefinition,
     ProfileStrips,
     build_profile_strips,
@@ -13,8 +13,8 @@ from coldformedjm.fsm_assembly import (
     solve_buckling,
     compute_signature_curve_fsm,
 )
-from coldformedjm.fsm import plate_critical_stress, PlateBucklingInput
-from coldformedjm.direct_strength import DSMCompressionInput, dsm_compression
+from coldformed.fsm import plate_critical_stress, PlateBucklingInput
+from coldformed.direct_strength import DSMCompressionInput, dsm_compression
 
 
 # =====================================================================

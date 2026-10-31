@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from coldformedjm.exceptions import GeometryError, MaterialError
-from coldformedjm.services import SectionInput, SectionResult, evaluate_section
+from coldformed.exceptions import GeometryError, MaterialError
+from coldformed.services import SectionInput, SectionResult, evaluate_section
 
 
 @pytest.mark.unit

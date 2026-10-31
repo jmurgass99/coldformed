@@ -1,5 +1,5 @@
 """
-ColdFormedJm - Thin-walled and Class 4 steel section evaluator.
+ColdFormed - Thin-walled and Class 4 steel section evaluator.
 """
 
 __version__ = "1.0.0"

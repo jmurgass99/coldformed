@@ -1,7 +1,7 @@
 """Tests para sap_section_bridge."""
 import pytest
 
-from coldformedjm.sap_section_bridge import (
+from coldformed.sap_section_bridge import (
     CFShape, channel, push_to_sap, sigma_section, z_section,
 )
 

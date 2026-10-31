@@ -6,8 +6,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from coldformedjm.api.app import create_router
-from coldformedjm.class4_evaluator import plate_relative_slenderness, effective_width_factor_rho
+from coldformed.api.app import create_router
+from coldformed.class4_evaluator import plate_relative_slenderness, effective_width_factor_rho
 
 
 @pytest.fixture

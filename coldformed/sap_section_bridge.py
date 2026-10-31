@@ -1,5 +1,5 @@
 """
-Bridge ColdFormedJm → SAP Section Designer.
+Bridge ColdFormed → SAP Section Designer.
 
 Genera el payload de polígono cerrado a partir de un perfil arbitrario
 para enviarlo via fastsap.OAPI (`SetSDSection`).

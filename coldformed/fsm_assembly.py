@@ -29,8 +29,8 @@ from scipy.linalg import eig
 # ------------------------------------------------------------------
 # Reuse the JIT-accelerated 4x4 bending matrices from fsm_jit.py
 # ------------------------------------------------------------------
-from coldformedjm.fsm_jit import fsm_local_stiffness_matrices_jit
-from coldformedjm.signature_curve import SignatureResult
+from coldformed.fsm_jit import fsm_local_stiffness_matrices_jit
+from coldformed.signature_curve import SignatureResult
 
 
 # ======================================================================

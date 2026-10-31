@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Aplicacion FastAPI ligera para ColdFormedJm.
+"""Aplicacion FastAPI ligera para ColdFormed.
 
 Expone un unico endpoint principal de evaluacion de secciones Clase 4.
 Las dependencias de FastAPI/Pydantic se importan de forma perezosa para
@@ -83,7 +83,7 @@ def create_app() -> Any:
     """Crea y devuelve la app FastAPI standalone."""
     from fastapi import FastAPI
 
-    app = FastAPI(title="ColdFormedJm API", version="1.0.0")
+    app = FastAPI(title="ColdFormed API", version="1.0.0")
     app.include_router(create_router())
     return app
 
