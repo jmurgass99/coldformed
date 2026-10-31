@@ -94,8 +94,10 @@ class DistortionalResultAISI:
     standard: str = "AISI S100-16/22"
     method: str = "Direct Strength Method (DSM)"
     units: dict[str, str] = field(default_factory=lambda: {"force": "kN", "moment": "kNm", "stress": "MPa", "length": "mm"})
-    sigma_crd_MPa: float = 0.0
+    sigma_crd_MPa: float = 0.0          # compresión uniforme (§2.3.1.3)
     L_crd_mm: float = 0.0
+    sigma_crd_flex_MPa: float = 0.0     # flexión pura (§2.3.3.3)
+    L_crd_flex_mm: float = 0.0
     # Compresión
     Py_kN: float = 0.0
     Pcrd_kN: float = 0.0
@@ -119,6 +121,8 @@ class DistortionalResultAISI:
             "units": dict(self.units),
             "sigma_crd_MPa": self.sigma_crd_MPa,
             "L_crd_mm": self.L_crd_mm,
+            "sigma_crd_flex_MPa": self.sigma_crd_flex_MPa,
+            "L_crd_flex_mm": self.L_crd_flex_mm,
             "Pnd_kN": self.Pnd_kN,
             "phi_c_Pn_kN": self.phi_c_Pn_kN,
             "Mnd_kNm": self.Mnd_kNm,
@@ -234,14 +238,28 @@ def aisi_distortional_buckling(
     Fy_MPa: float = 350.0,
     E_MPa: float = 210000.0,
     nu: float = 0.30,
+    L_m_mm: float | None = None,
+    k_phi_restraint_N: float = 0.0,
 ) -> DistortionalResultAISI:
     """Calcula el pandeo distorsional según el Direct Strength Method (AISI S100).
 
-    Aplica las ecuaciones analíticas de Schafer (2002) para perfiles C y Z lipped:
-    1. Propiedades de la pestaña y rigidizador de borde aislado.
-    2. Rigidez rotacional suministrada por el alma k_phi_w.
-    3. Longitud de onda crítica L_crd y tensión crítica de pandeo distorsional σ_crd.
-    4. Resistencia a compresión Pnd (§E3) y flexión Mnd (§F3).
+    Tensión crítica elástica distorsional por AISI S100-16 Apéndice 2 (Schafer 2002):
+    §2.3.1.3 para compresión uniforme y §2.3.3.3 para flexión pura (ξ_web = 2),
+    con las propiedades del conjunto ala-labio de la Tabla 2.3.1.3-1 (labio simple
+    a 90°, dimensiones de línea media). Después, resistencia distorsional P_nd
+    (§E4) y M_nd (§F4) con las curvas del DSM.
+
+    Args:
+        sec: geometría C o Z (dimensiones exteriores).
+        Fy_MPa, E_MPa, nu: material.
+        L_m_mm: distancia entre arriostramientos que limitan la semionda
+            distorsional; si es menor que L_cr se usa L = L_m (sube σ_crd).
+        k_phi_restraint_N: rigidez rotacional aportada por la chapa de cubierta
+            u otro elemento unido al ala comprimida, k_φ [N·mm/mm = N]. 0 si no hay.
+
+    Validación: sin ejemplo numérico publicado en el corpus; anclado a la
+    sustitución a mano de las ecuaciones y a comprobaciones de consistencia
+    (tests/test_aisi_distortional_appendix2.py).
     """
     is_valid, notes = check_aisi_dsm_applicability(sec, Fy_MPa)
 
@@ -250,36 +268,71 @@ def aisi_distortional_buckling(
     d = max(sec.lip_mm, 1.0)
     t = max(sec.t_mm, 0.5)
 
-    # 1. Propiedades del conjunto ala-pestaña (flange-lip)
-    Af = (b + d) * t
-    # Centro de gravedad del ala-pestaña desde el plano medio del alma (x) y ala (y)
-    x_bar = (b * t * (b / 2.0) + d * t * b) / Af
-    y_bar = (d * t * (d / 2.0)) / Af
-
-    # Inercias del ala-pestaña respecto a su propio centro de gravedad
-    Ixf = (t * (d ** 3) / 12.0) + (d * t * ((d / 2.0 - y_bar) ** 2)) + (b * t * (y_bar ** 2))
-    Iyf = (t * (b ** 3) / 12.0) + (b * t * ((b / 2.0 - x_bar) ** 2)) + (d * t * ((b - x_bar) ** 2))
-    Jf = (1.0 / 3.0) * (b + d) * (t ** 3)
+    # ------------------------------------------------------------------
+    # AISI S100-16 Apéndice 2 — §2.3.1.3 (compresión) y §2.3.3.3 (flexión).
+    # Ecuaciones de Schafer (2002) para C/Z con labio simple a 90°:
+    #   F_crd = (k_φfe + k_φwe + k_φ) / (k̃_φfg + k̃_φwg)
+    # Dimensiones de línea media para ala (b) y labio (d); h_o = canto total.
+    # Hasta 2026-10-31 este bloque mezclaba (π/L)² con (π/L)⁴ y omitía
+    # k̃_φwg: σ_crd salía del orden de 10⁶ MPa y el modo distorsional nunca
+    # gobernaba (ver tests/test_aisi_distortional_appendix2.py).
+    # ------------------------------------------------------------------
+    t = max(sec.t_mm, 0.5)
+    h_o = max(sec.h_mm, 10.0)
+    b = max(sec.b_mm - t, 1.0)
+    d = max(sec.lip_mm - t / 2.0, 0.0)
     G = E_MPa / (2.0 * (1.0 + nu))
+    pi = math.pi
 
-    # Radio de giro polar respecto al punto de unión alma-ala
-    r_of_sq = (Ixf + Iyf) / Af + (x_bar ** 2) + (y_bar ** 2)
+    # Propiedades del conjunto ala-labio respecto a la unión ala-alma
+    # (Apéndice 2, Tabla 2.3.1.3-1, labio simple).
+    Af = (b + d) * t
+    Jf = (b + d) * t ** 3 / 3.0
+    Ixf = t * (t ** 2 * b ** 2 + 4.0 * b * d ** 3 + t ** 2 * b * d + d ** 4) / (12.0 * (b + d))
+    Iyf = t * (b ** 4 + 4.0 * d * b ** 3) / (12.0 * (b + d))
+    Ixyf = t * b ** 2 * d ** 2 / (4.0 * (b + d))
+    x_o = b ** 2 / (2.0 * (b + d))
+    y_o = -d ** 2 / (2.0 * (b + d))
+    h_x = -(b ** 2 + 2.0 * d * b) / (2.0 * (b + d))
+    Cwf = 0.0
+    core = Ixf * (x_o - h_x) ** 2 + Cwf - (Ixyf ** 2 / Iyf) * (x_o - h_x) ** 2
+    core = max(core, 1e-9)
 
-    # 2. Rigidez rotacional del alma k_phi_w (Schafer 2002)
-    k_phi_w = (E_MPa * (t ** 3)) / (6.0 * (1.0 - nu ** 2) * h)
+    def k_phi_fe(L: float) -> float:
+        return (pi / L) ** 4 * E_MPa * core + (pi / L) ** 2 * G * Jf
 
-    # 3. Longitud de onda crítica L_crd
-    term_L = (E_MPa * Ixf * (b ** 2)) / max(k_phi_w, 1e-6)
-    L_crd = math.pi * (term_L ** 0.25)
-    L_crd = max(50.0, min(L_crd, 20.0 * h))
+    def k_phi_fg(L: float) -> float:
+        ratio = Ixyf / Iyf
+        return (pi / L) ** 2 * (
+            Af * ((x_o - h_x) ** 2 * ratio ** 2 - 2.0 * y_o * (x_o - h_x) * ratio + h_x ** 2 + y_o ** 2)
+            + Ixf + Iyf
+        )
 
-    # Tensión elástica crítica de pandeo distorsional σ_crd
-    pi_L_sq = (math.pi / L_crd) ** 2
-    k_phi_fe = pi_L_sq * E_MPa * Ixf * (y_bar ** 2) + G * Jf
-    k_phi_fg = Af * pi_L_sq * (r_of_sq + y_bar ** 2)
-
-    sigma_crd = (k_phi_fe + k_phi_w) / max(k_phi_fg, 1e-9)
+    # --- Compresión (§2.3.1.3) ---
+    L_cr_c = (6.0 * pi ** 4 * h_o * (1.0 - nu ** 2) / t ** 3 * core) ** 0.25
+    L_c = min(L_cr_c, L_m_mm) if L_m_mm else L_cr_c
+    k_phi_we_c = E_MPa * t ** 3 / (6.0 * h_o * (1.0 - nu ** 2))
+    k_phi_wg_c = (pi / L_c) ** 2 * t * h_o ** 3 / 60.0
+    sigma_crd = (k_phi_fe(L_c) + k_phi_we_c + k_phi_restraint_N) / (k_phi_fg(L_c) + k_phi_wg_c)
     sigma_crd = max(1.0, sigma_crd)
+    L_crd = L_c
+
+    # --- Flexión (§2.3.3.3), ξ_web = (f1 − f2)/f1 = 2 para flexión pura ---
+    xi_web = 2.0
+    L_cr_b = (4.0 * pi ** 4 * h_o * (1.0 - nu ** 2) / t ** 3 * core + pi ** 4 * h_o ** 4 / 720.0) ** 0.25
+    L_b = min(L_cr_b, L_m_mm) if L_m_mm else L_cr_b
+    r = L_b / h_o
+    k_phi_we_b = E_MPa * t ** 3 / (12.0 * (1.0 - nu ** 2)) * (
+        3.0 / h_o + (pi / L_b) ** 2 * 19.0 * h_o / 60.0 + (pi / L_b) ** 4 * h_o ** 3 / 240.0
+    )
+    k_phi_wg_b = (pi / L_b) ** 2 * t * h_o ** 3 / 13440.0 * (
+        ((45360.0 * (1.0 - xi_web) + 62160.0) * r ** 2 + 448.0 * pi ** 2
+         + (h_o / L_b) ** 2 * (53.0 + 3.0 * (1.0 - xi_web)) * pi ** 4)
+        / (pi ** 4 + 28.0 * pi ** 2 * r ** 2 + 420.0 * r ** 4)
+    )
+    sigma_crd_flex = (k_phi_fe(L_b) + k_phi_we_b + k_phi_restraint_N) / (k_phi_fg(L_b) + k_phi_wg_b)
+    sigma_crd_flex = max(1.0, sigma_crd_flex)
+    L_crd_flex = L_b
 
     # 4. Compresión nominal Pnd (AISI S100 §E3)
     Ag = sec.gross_area_mm2
@@ -299,7 +352,7 @@ def aisi_distortional_buckling(
     # 5. Flexión nominal Mnd (AISI S100 §F3)
     Sf = sec.gross_modulus_major_mm3
     My = Sf * Fy_MPa / 1e6  # kN·m
-    Mcrd = Sf * sigma_crd / 1e6  # kN·m
+    Mcrd = Sf * sigma_crd_flex / 1e6  # kN·m
     lam_d_b = math.sqrt(My / max(Mcrd, 1e-6))
 
     if lam_d_b <= 0.673:
@@ -316,6 +369,8 @@ def aisi_distortional_buckling(
         method="Direct Strength Method (DSM)",
         sigma_crd_MPa=round(sigma_crd, 2),
         L_crd_mm=round(L_crd, 1),
+        sigma_crd_flex_MPa=round(sigma_crd_flex, 2),
+        L_crd_flex_mm=round(L_crd_flex, 1),
         Py_kN=round(Py, 2),
         Pcrd_kN=round(Pcrd, 2),
         lambda_d_c=round(lam_d_c, 3),

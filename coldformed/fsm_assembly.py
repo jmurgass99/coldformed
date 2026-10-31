@@ -138,6 +138,40 @@ def build_profile_strips(
         )
 
 
+def refine_profile_strips(strips: ProfileStrips, n_sub: int = 4) -> ProfileStrips:
+    """Subdivide cada franja en ``n_sub`` franjas iguales añadiendo nodos intermedios.
+
+    Una sola franja por elemento plano no puede flectar transversalmente en
+    media onda, así que el modo local de un alma o un ala anchos sale muy
+    rígido (para una C 200x60x20x2 el mínimo local pasa de 154 MPa con una
+    franja por elemento a 109 MPa con 4 subfranjas). Los nodos nuevos se
+    añaden al final de ``node_coords``; la conectividad los referencia por
+    índice, así que el ensamblado no exige nodos contiguos.
+    """
+    if n_sub < 1:
+        raise ValueError("n_sub debe ser >= 1")
+    if n_sub == 1:
+        return strips
+    nodes = list(strips.node_coords)
+    out: list[StripDefinition] = []
+    for s in strips.strips:
+        i, j = s.connectivity
+        (x0, y0), (x1, y1) = nodes[i], nodes[j]
+        prev = i
+        for k in range(1, n_sub + 1):
+            if k < n_sub:
+                nodes.append((x0 + (x1 - x0) * k / n_sub, y0 + (y1 - y0) * k / n_sub))
+                nxt = len(nodes) - 1
+            else:
+                nxt = j
+            out.append(StripDefinition(
+                width_mm=s.width_mm / n_sub, thickness_mm=s.thickness_mm, E_MPa=s.E_MPa, nu=s.nu,
+                stress_distribution=s.stress_distribution, connectivity=(prev, nxt),
+            ))
+            prev = nxt
+    return ProfileStrips(strips=out, node_coords=nodes)
+
+
 def _strip(w: float, t: float, E: float, nu: float,
            conn: tuple[int, int]) -> StripDefinition:
     return StripDefinition(
