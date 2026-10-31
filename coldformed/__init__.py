@@ -2,7 +2,7 @@
 ColdFormed - Thin-walled and Class 4 steel section evaluator.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 _SECTPROPS_ATTRS = {
     "SectionProperties",

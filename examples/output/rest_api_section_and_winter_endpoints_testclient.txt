@@ -1,0 +1,16 @@
+GET /api/coldformed/health → {'status': 'ok'}
+
+POST /api/coldformed/section → 200 {"section_class": 4, "epsilon": 0.813617, "w_eff_cm3": 809.9}
+
+POST /api/coldformed/effective-width/class4 (alma W00777) → 200
+{
+  "b_bar_mm": 1488.0,
+  "t_mm": 10.0,
+  "lambda_p": 1.3172429597410191,
+  "rho": 0.6957655305820986,
+  "b_eff_mm": 1035.2991095061627,
+  "is_effective_reduced": true,
+  "code": "EN 1993-1-5 §4.4 (Winter Eq. 4.2 / 4.3)"
+}
+
+t negativo → 422 (validación de entrada)

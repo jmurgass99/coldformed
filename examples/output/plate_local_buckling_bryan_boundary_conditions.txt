@@ -1,0 +1,12 @@
+t = 2.0 mm, E = 210 000 MPa, ν = 0,30
+
+ b [mm]    b/t |    ss_ss  ss_free       cc       cs |   k=23,9
+                   k=4.0  k=0.425   k=6.97   k=5.42
+     50     25 |   1214.7    129.1   2116.7   1645.9 |   7258.0
+    100     50 |    303.7     32.3    529.2    411.5 |   1814.5
+    150     75 |    135.0     14.3    235.2    182.9 |    806.4
+    200    100 |     75.9      8.1    132.3    102.9 |    453.6
+    300    150 |     33.7      3.6     58.8     45.7 |    201.6
+
+local_critical_stress(150, 2, 'ss_free') → σ_cr = 14.34 MPa, k = 0.425, b/t = 75, método: Bryan/Timoshenko (analitica)
+Comparación con f_y = 350 MPa: por encima de la fila con σ_cr < 350 la placa pandea antes de plastificar.

@@ -1,0 +1,6 @@
+C 200x60x20x2.0, A = 720 mm², L = 2400 mm
+  local (FSM refinado):       σ_crl =  108.6 MPa a λ = 148 mm → P_crl = 78.2 kN
+  distorsional (Apéndice 2):  σ_crd =  227.9 MPa a L_cr = 588 mm → P_crd = 164.1 kN
+  global (Euler, I_min dato): P_cre = 107.9 kN
+
+DSM: P_y = 252.0  P_ne = 94.7  P_nl = 75.5  P_nd = 157.2  →  P_n = 75.5 kN, gobierna local; φ_c·P_n = 64.2 kN

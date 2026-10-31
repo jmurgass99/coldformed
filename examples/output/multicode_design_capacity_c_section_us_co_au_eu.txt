@@ -1,0 +1,17 @@
+C 200x65x20x2.0, f_y = 350 MPa
+
+US: AISI S100-22 Specification for Cold-Formed Steel (DSM)
+   compression  nominal =   160.70 kN   diseño =   136.59 kN   método: Direct Strength Method (DSM)
+   bending      nominal =    14.16 kN·m diseño =    12.74 kN·m método: Direct Strength Method (DSM)
+CO: NSR-10 §F.4 (basado en AISI DSM)
+   compression  nominal =   160.70 kN   diseño =   136.59 kN   método: Direct Strength Method (DSM)
+   bending      nominal =    14.16 kN·m diseño =    12.74 kN·m método: Direct Strength Method (DSM)
+AU: AS/NZS 4600:2018 Cold-formed steel structures (DSM)
+   compression  nominal =   160.70 kN   diseño =   136.59 kN   método: Direct Strength Method (DSM)
+   bending      nominal =    14.16 kN·m diseño =    12.74 kN·m método: Direct Strength Method (DSM)
+EU: EN 1993-1-3:2006 Eurocode 3 Part 1-3 (EWM)
+   compression  nominal =   164.91 kN   diseño =   164.91 kN   método: Effective Width Method (EWM §5.5.3 Edge Stiffener)
+   bending      nominal =    16.04 kN·m diseño =    16.04 kN·m método: Effective Width Method (EWM §5.5.3 Edge Stiffener)
+SG: SS EN 1993-1-3 (NA Singapore EWM)
+   compression  nominal =   164.91 kN   diseño =   164.91 kN   método: Effective Width Method (EWM §5.5.3 Edge Stiffener)
+   bending      nominal =    16.04 kN·m diseño =    16.04 kN·m método: Effective Width Method (EWM §5.5.3 Edge Stiffener)

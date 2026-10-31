@@ -1,0 +1,12 @@
+Cajón b = 400 mm, h = 1000 mm, S355 (ε = 0.814, límites Clase 3: alma 100.9, ala 34.2)
+
+ t [mm]     h/t    b/t  clase  W_eff [cm³]
+    6.0   166.7   66.7      4        777.1
+    8.0   125.0   50.0      4       2207.5
+   10.0   100.0   40.0      4       4823.0
+   12.0    83.3   33.3      3       6545.1
+   15.0    66.7   26.7      3       8103.5
+   20.0    50.0   20.0      3      10633.4
+
+Servicio evaluate_section (t = 8 mm): {'section_class': 4, 'epsilon': 0.813617, 'w_eff_cm3': 2207.49}
+Entrada inválida (t = 0): GeometryError: t debe ser > 0 (recibido 0.0)

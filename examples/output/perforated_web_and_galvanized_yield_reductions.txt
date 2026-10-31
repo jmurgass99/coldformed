@@ -1,0 +1,22 @@
+Hueco d = 40 mm, separación 300 mm (d/w = 0.27):
+  AISI  A_bruta = 225, A_neta = 148 mm², factor = 0.660, P_n = 59.4 kN  ['spacing <24d penaliza extra']
+  EN    A_bruta = 225, A_neta = 165 mm², factor = 0.578, P_n = 52.0 kN  
+Hueco d = 40 mm, separación 600 mm (d/w = 0.27):
+  AISI  A_bruta = 225, A_neta = 148 mm², factor = 0.660, P_n = 59.4 kN  ['spacing <24d penaliza extra']
+  EN    A_bruta = 225, A_neta = 165 mm², factor = 0.578, P_n = 52.0 kN  
+Hueco d = 100 mm, separación 300 mm (d/w = 0.67):
+  AISI  A_bruta = 225, A_neta = 68 mm², factor = 0.300, P_n = 27.0 kN  ['d/w>0.5 fuera de rango AISI estándar', 'spacing <24d penaliza extra']
+  EN    A_bruta = 225, A_neta = 75 mm², factor = 0.193, P_n = 17.3 kN  ['d/w>0.6 fuera de rango EN 1993-1-3']
+
+Límite elástico ajustado por recubrimiento (f_y = 350 MPa):
+  hot_dip_galvanized   f_y,adj = 332.5 MPa
+  electrogalvanized    f_y,adj = 343.0 MPa
+  aluminized           f_y,adj = 339.5 MPa
+  duplex               f_y,adj = 329.0 MPa
+  painted              f_y,adj = 350.0 MPa
+
+Espesor mínimo de zinc EN ISO 1461:
+  t = 1.2 mm → 45 μm
+  t = 2.0 mm → 55 μm
+  t = 4.0 mm → 70 μm
+  t = 8.0 mm → 85 μm

@@ -1,0 +1,18 @@
+C 200x60x20x2,0 (habitual): h/t = 100, b/t = 30, c/t = 10, h/b = 3.33, c/b = 0.33
+   AISI DSM  válido: sin avisos
+   EN 1993-1-3 válido: sin avisos
+C 300x60x15x1,2 (alma muy esbelta): h/t = 250, b/t = 50, c/t = 12, h/b = 5.00, c/b = 0.25
+   AISI DSM  NO válido: ['h/t = 250.0 excede el límite DSM de 200 para perfiles C/Z']
+   EN 1993-1-3 válido: sin avisos
+C 150x90x10x1,5 (ala ancha, labio corto): h/t = 100, b/t = 60, c/t = 7, h/b = 1.67, c/b = 0.11
+   AISI DSM  válido: sin avisos
+   EN 1993-1-3 válido: ['Relación c/b = 0.11 fuera de la recomendación EN 1993-1-3 [0.2, 0.6]']
+Z 250x75x25x2,5: h/t = 100, b/t = 30, c/t = 10, h/b = 3.33, c/b = 0.33
+   AISI DSM  válido: sin avisos
+   EN 1993-1-3 válido: sin avisos
+C 200x60x0x2,0 (sin labio): h/t = 100, b/t = 30, c/t = 0, h/b = 3.33, c/b = 0.00
+   AISI DSM  NO válido: ['El perfil carece de pestaña (lip <= 0); no es aplicable pandeo distorsional de borde', 'Relación lip/b = 0.00 fuera del rango típico [0.05, 0.50]']
+   EN 1993-1-3 NO válido: ['Perfil sin rigidizador de borde (c <= 0); aplicar §5.5.2 en vez de §5.5.3', 'Relación c/b = 0.00 fuera de la recomendación EN 1993-1-3 [0.2, 0.6]']
+C 200x60x20x2,0 en f_y = 600: h/t = 100, b/t = 30, c/t = 10, h/b = 3.33, c/b = 0.33
+   AISI DSM  NO válido: ['Fy = 600.0 MPa excede el límite de acero conformado en frío (550 MPa)']
+   EN 1993-1-3 NO válido: ['fyb = 600.0 MPa excede los aceros normalizados de EN 1993-1-3']

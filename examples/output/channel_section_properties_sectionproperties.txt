@@ -1,0 +1,8 @@
+C200x75x3.0: A = 1032 mm², I_xx = 6.192e+06 mm⁴, I_yy = 5.403e+05 mm⁴
+  J = 3114.9 mm⁴, C_w = 3.715e+09 mm⁶, Z_xx,pl = 7.255e+04 mm³, r_xx = 77.5 mm, r_yy = 22.9 mm
+  centroide: x = 17.2 mm, y = 100.0 mm  ['Channel d=200 b=75 tf=3.0 tw=3.0 mm', 'Area = 1032 mm2']
+
+C250x80x2.5: A = 1012 mm², I_xx = 9.190e+06 mm⁴, I_yy = 5.770e+05 mm⁴
+  J = 2118.0 mm⁴, C_w = 6.334e+09 mm⁶, Z_xx,pl = 8.702e+04 mm³, r_xx = 95.3 mm, r_yy = 23.9 mm
+  centroide: x = 16.6 mm, y = 125.0 mm  ['Channel d=250 b=80 tf=2.5 tw=2.5 mm', 'Area = 1012 mm2']
+

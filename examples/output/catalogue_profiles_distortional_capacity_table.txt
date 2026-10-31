@@ -1,0 +1,13 @@
+f_y = 350 MPa
+
+perfil            kg/m | φP_n AISI φM_n AISI | N_c,Rd EC3 M_c,Rd EC3
+AISI C8x2.5       3.92 |     106.2     11.22 |      145.8      14.83
+AISI C10x2.5      5.16 |     135.3     19.99 |      204.9      25.51
+AISI C12x3        7.24 |     219.7     37.01 |      310.8      45.91
+EN C200x80x25     5.50 |     158.7     14.08 |      172.2      18.22
+EN C250x80x25     7.85 |     212.6     24.83 |      257.6      31.06
+AISI Z8x2.5       3.92 |     106.2     11.22 |      145.8      14.83
+AISI Z10x3        5.85 |     239.5     29.84 |      310.8      35.96
+
+* fuera de los límites de aplicabilidad de alguno de los métodos (ver applicability_limits_geometry_sweep.py)
+Unidades: kN y kN·m. Los perfiles Σ del catálogo no se evalúan: los dos módulos cubren solo C y Z.

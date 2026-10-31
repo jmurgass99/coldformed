@@ -1,0 +1,8 @@
+tol = 0.05   iteraciones =  5  convergió = True  b_eff/b final = 0.214
+         historia del ratio: 1.000, 0.427, 0.291, 0.243, 0.223, 0.214
+tol = 0.01   iteraciones =  7  convergió = True  b_eff/b final = 0.208
+         historia del ratio: 1.000, 0.427, 0.291, 0.243, 0.223, 0.214, 0.210, 0.208
+tol = 0.001  iteraciones = 10  convergió = True  b_eff/b final = 0.207
+         historia del ratio: 1.000, 0.427, 0.291, 0.243, 0.223, 0.214, 0.210, 0.208, 0.207, 0.207, 0.207
+
+Con la sección bruta el alma parecía eficaz al 100 %; converge a un ratio bastante menor porque cada reducción eleva la tensión y vuelve a reducir.

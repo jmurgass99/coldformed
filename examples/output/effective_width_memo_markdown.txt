@@ -1,0 +1,27 @@
+σ_cr = 52.7 MPa, λ_p = 2.178, ρ = 0.413, b_eff = 74.3 mm
+
+# Memoria — Ancho efectivo (EN 1993-1-5 / AISI)
+
+**Geometría:** b = 180.0 mm, t = 1.50 mm, b/t = 120.0
+**Esfuerzo actuante:** σ = 250.0 MPa
+
+## Paso 1 — Esfuerzo crítico de placa (Bryan)
+
+σ_cr = k · π² · E / [12 · (1-ν²) · (b/t)²]
+σ_cr = 4.0 · π² · 210000 / [12 · (1 - 0.3²) · 120.0²]
+**σ_cr = 52.7 MPa**
+
+## Paso 2 — Esbeltez de placa
+
+λ_p = √(σ/σ_cr) = √(250.0/52.7) = 2.178
+
+## Paso 3 — Factor de reducción
+
+λ_p = 2.178 > 0.673 → ρ = (λ_p - 0.22)/λ_p² = (2.178 - 0.22)/2.178² = **0.413**
+
+## Paso 4 — Ancho efectivo
+
+**b_eff = ρ · b = 0.413 · 180.0 = 74.3 mm**
+
+LaTeX:
+\sigma_{cr} = \frac{k\pi^2 E}{12(1-\nu^2)(b/t)^2} = 52.7\;\text{MPa}\\\lambda_p = \sqrt{\sigma/\sigma_{cr}} = 2.178\\\rho = 0.413\\b_{eff} = \rho\,b = 74.3\;\text{mm}

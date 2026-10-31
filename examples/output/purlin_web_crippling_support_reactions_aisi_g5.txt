@@ -1,0 +1,15 @@
+C 250x75x20x2.0, f_y = 350, R = 3.0 mm, h = 250 mm, N = 60 mm
+
+caso                              P_n [kN]  φP_n [kN]  coeficientes
+stiffened_end_one_flange             10.51       7.88  EOF rigidizada
+stiffened_interior_one_flange        20.52      15.39  IOF rigidizada
+stiffened_end_two_flange              7.27       5.45  ETF rigidizada
+stiffened_interior_two_flange        23.09      17.32  ITF rigidizada
+unstiffened_end_one_flange           10.51       7.88  EOF no rigidizada
+
+Apoyo interior, un ala: efecto de la longitud de apoyo N y del espesor t
+N [mm] |    t=1.5    t=2.0    t=2.5    t=3.0
+    40 |     7.77    14.16    22.40    32.48
+    60 |     8.51    15.39    24.21    34.94
+   100 |     9.67    17.33    27.07    38.86
+   150 |    10.83    19.27    29.93    42.76

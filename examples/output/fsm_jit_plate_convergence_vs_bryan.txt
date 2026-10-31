@@ -1,0 +1,10 @@
+Placa 120x1.5 mm, borde ss_ss: Bryan σ_cr = 118.625 MPa (k = 4.0)
+   4 franjas: σ_cr = 118.650 MPa, k_ef = 4.0008, error +2.07e-04; barrido 60/60 longitudes convergidas
+   8 franjas: σ_cr = 118.634 MPa, k_ef = 4.0003, error +7.96e-05; barrido 60/60 longitudes convergidas
+  16 franjas: σ_cr = 118.634 MPa, k_ef = 4.0003, error +7.17e-05; barrido 60/60 longitudes convergidas
+
+Placa 120x1.5 mm, borde ss_free: Bryan σ_cr = 12.604 MPa (k = 0.425)
+   4 franjas: σ_cr = 12.638 MPa, k_ef = 0.4262, error +2.71e-03; barrido 60/60 longitudes convergidas
+   8 franjas: σ_cr = 12.638 MPa, k_ef = 0.4262, error +2.71e-03; barrido 60/60 longitudes convergidas
+  16 franjas: σ_cr = 12.638 MPa, k_ef = 0.4262, error +2.71e-03; barrido 60/60 longitudes convergidas
+

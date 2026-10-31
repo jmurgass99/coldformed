@@ -1,0 +1,13 @@
+A = 420 mm², P_y = 147.0 kN
+σ_crl (alma, k = 4) = 75.9 MPa → P_crl = 31.9 kN
+σ_crd (Schafer)     = 224.0 MPa → P_crd = 94.1 kN, L_crd = 470 mm
+
+ L [m]   P_cre    P_ne    P_nl    P_nd     P_n  gobierna
+   1.0   248.7   114.8    62.6    91.0    62.6  local
+   1.5   110.5    84.3    51.3    91.0    51.3  local
+   2.0    62.2    54.5    38.7    91.0    38.7  local
+   2.5    39.8    34.9    28.8    91.0    28.8  local
+   3.0    27.6    24.2    22.5    91.0    22.5  local
+   4.0    15.5    13.6    13.6    91.0    13.6  local
+
+φ_c = 0,85 (LRFD) se aplica después con codes_multi.design_resistance_compression.

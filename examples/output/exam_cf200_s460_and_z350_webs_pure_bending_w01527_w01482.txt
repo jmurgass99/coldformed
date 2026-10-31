@@ -1,0 +1,6 @@
+caso                                      b/t      ε    λ_p      ρ | ficha λ_p / ρ
+CF 200.2, S460 (W01527)                  99.0  0.715  0.998  0.892 | 1.00 / 0.890
+Z 350.3, S350GD (W01482)                116.7  0.819  1.025  0.871 | 1.03 / 0.867
+Viga armada 1488x10, S355 (W00777)      148.8  0.814  1.317  0.696 | 1.32 / 0.690
+
+Las fichas redondean λ_p a dos decimales antes de evaluar ρ; la diferencia con el valor exacto es de 0,001 a 0,003 en ρ.

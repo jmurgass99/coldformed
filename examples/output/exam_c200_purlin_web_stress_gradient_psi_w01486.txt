@@ -1,0 +1,10 @@
+C 200.74.2, S350GD: h_p = 198.0 mm, t = 1.96 mm, ψ = -0.74
+  ε = 0.8194, k_σ = 17.82 (fórmula Tabla 4.1)
+  λ_p = 1.0283   (ficha: 1,03)
+  ρ   = 0.8549   (ficha: 0,85)
+  altura eficaz comprimida de la parte plana: ρ·h_p = 169.3 mm de 198 mm
+
+Mismo λ_p con hipótesis equivocadas:
+  ψ = +1 (compresión uniforme): ρ = 0.764
+  fórmula de voladizo (0,188):  ρ = 0.795
+  Ninguna reproduce el 0,85 de la ficha: el término 0,055·(3+ψ) y el umbral dependen de ψ.
