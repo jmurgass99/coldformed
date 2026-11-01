@@ -1,5 +1,7 @@
 # coldformed — acero conformado en frío y secciones de Clase 4 (EN 1993-1-3/1-5, AISI S100)
 
+**Español** · [English](README.en.md) · [Português](README.pt.md) · [Italiano](README.it.md)
+
 Ancho eficaz de Winter y clasificación de secciones de Clase 4 (EN 1993-1-5 §4.4), Método de la Resistencia Directa en flexión y compresión (AISI S100 / AS/NZS 4600), pandeo distorsional de perfiles C y Z por AISI S100 Apéndice 2 y por EN 1993-1-3 §5.5.3 (rigidizador de borde), tensión crítica de pandeo local de placa (Bryan y franjas finitas con Numba), y las comprobaciones que acompañan a una correa o un montante: cortante del alma, abolladura en apoyos, interacción, torsión, perforaciones y galvanizado. Las funciones son puras y están ancladas a ejemplos resueltos a mano.
 
 [![CI](https://github.com/jmurgass99/coldformed/actions/workflows/ci.yml/badge.svg)](https://github.com/jmurgass99/coldformed/actions/workflows/ci.yml)
@@ -816,7 +818,7 @@ t negativo → 422 (validación de entrada)
 - `web_crippling` incluye cinco conjuntos representativos de coeficientes de la Tabla G5-1, no las cinco tablas completas.
 - `perforations`, `galvanizing` y `cost_estimator` son reglas simplificadas y tarifas orientativas.
 - El metamodelo `surrogates` tiene errores del orden del 10–20 % por punto; es una herramienta de cribado.
-- `fatpack`-style cuantización no aplica aquí, pero `fsm_jit` compila con Numba en la primera llamada (unos segundos).
+- `fsm_jit` compila con Numba en la primera llamada, que tarda unos segundos.
 
 ## Normas y referencias
 
