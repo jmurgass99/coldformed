@@ -483,9 +483,29 @@ def _membrane_ke_4x4(width: float, thickness: float, length: float,
     return Km
 
 
-def _membrane_kg_4x4() -> np.ndarray:
-    """Geometric stiffness for membrane DOFs is zero for plate buckling."""
-    return np.zeros((4, 4))
+def _membrane_kg_4x4(
+    width: float = 0.0,
+    thickness: float = 0.0,
+    length: float = 1.0,
+    sigma_x: float = 0.0,
+    include_membrane_kg: bool = False,
+) -> np.ndarray:
+    """Geometric stiffness for membrane DOFs (u_i, v_i, u_j, v_j).
+
+    When ``include_membrane_kg=True``, returns the consistent Cheung (1976) /
+    CUFSM membrane geometric stiffness matrix:
+    ``sigma_x * t * (pi / L)^2 * (b / 6) * [[2,0,1,0],[0,2,0,1],[1,0,2,0],[0,1,0,2]]``.
+    """
+    if not include_membrane_kg or width <= 0.0 or thickness <= 0.0 or sigma_x == 0.0:
+        return np.zeros((4, 4))
+    p2 = (math.pi / length) ** 2
+    coeff = sigma_x * thickness * p2 * (width / 6.0)
+    return coeff * np.array([
+        [2.0, 0.0, 1.0, 0.0],
+        [0.0, 2.0, 0.0, 1.0],
+        [1.0, 0.0, 2.0, 0.0],
+        [0.0, 1.0, 0.0, 2.0],
+    ])
 
 
 # ======================================================================
@@ -512,6 +532,7 @@ def _strip_matrices_global(
     ps: ProfileStrips,
     half_wavelength: float,
     sigma_x: float,
+    include_membrane_kg: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Build 8x8 K_E and K_G for one strip in global coordinates.
 
@@ -533,7 +554,7 @@ def _strip_matrices_global(
 
     # -- Membrane 4x4 --
     ke_memb = _membrane_ke_4x4(b, t, L, E, nu)
-    kg_memb = _membrane_kg_4x4()
+    kg_memb = _membrane_kg_4x4(b, t, L, sigma_x, include_membrane_kg=include_membrane_kg)
 
     # Assemble local 8x8.
     # DOF mapping: [u_i, v_i, w_i, theta_i, u_j, v_j, w_j, theta_j]
@@ -607,6 +628,7 @@ def assemble_K_G(
     strips: ProfileStrips,
     half_wavelength: float,
     stress_dist: np.ndarray,
+    include_membrane_kg: bool = False,
 ) -> np.ndarray:
     """Assemble the global geometric stiffness matrix.
 
@@ -619,6 +641,9 @@ def assemble_K_G(
     stress_dist : np.ndarray
         Vector of edge stresses per strip (length = n_strips).
         Compression positive.
+    include_membrane_kg : bool
+        If True, includes the consistent membrane geometric stiffness block
+        for (u, v) DOFs in addition to the plate-bending Hermite block.
 
     Returns
     -------
@@ -634,7 +659,11 @@ def assemble_K_G(
 
     for idx, strip in enumerate(strips.strips):
         _, kg_g = _strip_matrices_global(
-            strip, strips, half_wavelength, float(stress_dist[idx]),
+            strip,
+            strips,
+            half_wavelength,
+            float(stress_dist[idx]),
+            include_membrane_kg=include_membrane_kg,
         )
         _scatter(K_G, kg_g, strip.connectivity)
 

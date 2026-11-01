@@ -2,17 +2,16 @@
 Finite Strip Method (FSM) — motor base para pandeo elástico local y
 distorsional en perfiles conformados en frío Clase 4.
 
-Por ahora cubre la solución cerrada para placas (esfuerzo crítico de Euler
-para placas) y el armado de la matriz de rigidez geométrica K_G para una
-franja de placa simple. La extensión completa a perfiles compuestos
-(múltiples franjas con conectividad transversal) queda como follow-up;
-ver el TODO al final.
+Cubre la solución cerrada para placas (esfuerzo crítico de Euler para placas)
+y el armado de la matriz de rigidez geométrica consistente K_G (flexión de
+placa Hermite + membrana lineal en el plano) para una franja finita. El
+ensamblado multi-franja con conectividad transversal y curva firma completa
+vive en ``coldformed.fsm_assembly``.
 
 Referencias:
     Schafer, B. W. (2008) — CUFSM and the Direct Strength Method.
     Hancock, G.J. (2006) — Cold-Formed Steel Structures, 4th ed.
     Eurocódigo EN 1993-1-5 §4 — placas comprimidas.
-    Curso IEG 3120 — Inestabilidad estructural.
 """
 from __future__ import annotations
 
@@ -84,7 +83,6 @@ def plate_critical_stress(data: PlateBucklingInput) -> PlateBucklingResult:
     k = data.k_override if data.k_override is not None else PLATE_K[data.boundary]
     D = data.E_MPa * data.thickness_mm ** 3 / (12.0 * (1.0 - data.nu ** 2))
     sigma_cr = (k * pi ** 2 * D) / (data.width_mm ** 2 * data.thickness_mm)
-    # Esbeltez de placa (sólo informativa — el cálculo real necesita f_y).
     slenderness = data.width_mm / data.thickness_mm
     return PlateBucklingResult(
         sigma_cr_MPa=sigma_cr, k=k, D_Nmm=D, slenderness=slenderness,
@@ -95,34 +93,33 @@ def plate_critical_stress(data: PlateBucklingInput) -> PlateBucklingResult:
 # K_G de una franja FSM (semi-analítica, modo m=1, half-wavelength dado)
 # ----------------------------------------------------------------------
 
-def strip_geometric_stiffness(width: float, length: float,
-                              thickness: float, sigma_x: float,
-                              n_dof_per_node: int = 4) -> np.ndarray:
-    """Matriz de rigidez geométrica K_G de una franja FSM (4 nodos virtuales).
+def strip_geometric_stiffness(
+    width: float,
+    length: float,
+    thickness: float,
+    sigma_x: float,
+    n_dof_per_node: int = 4,
+    include_membrane: bool = True,
+) -> np.ndarray:
+    """Matriz de rigidez geométrica K_G de una franja FSM (8 GDL: 4 flexión + 4 membrana).
 
-    Simplificación: modo longitudinal sinusoidal (m=1) en la longitud
-    ``length`` (semilongitud de onda), placa rectangular de ancho
-    ``width`` y espesor ``thickness``, esfuerzo axial uniforme ``sigma_x``
-    (compresión positiva). Devuelve la K_G consistente para los 8 GDL de
-    la franja (2 nodos × 4 GDL: w, ∂w/∂x, u, v).
-
-    Esta es una versión simplificada para el follow-up; el ensamblado
-    global de FSM se hace sumando contribuciones de varias franjas con
-    transformaciones de compatibilidad nodal.
+    Modo longitudinal sinusoidal (m=1) en la semilongitud de onda ``length``,
+    placa rectangular de ancho ``width`` y espesor ``thickness``, esfuerzo axial
+    uniforme ``sigma_x`` (compresión positiva). Devuelve la K_G consistente para
+    los 8 GDL de la franja: bloque ``[:4, :4]`` de flexión transversal Hermite
+    ``[w_i, θ_i, w_j, θ_j]`` y bloque ``[4:, 4:]`` de membrana lineal
+    ``[u_i, v_i, u_j, v_j]`` (Cheung 1976 / Schafer 2008 Eq. 26).
 
     Returns:
-        K_G: array 8x8 (consistente con la convención CUFSM Schafer 2008).
+        K_G: array 8x8 simétrico.
     """
     if width <= 0 or length <= 0 or thickness <= 0:
         raise ValueError("width, length y thickness deben ser > 0")
-    # Forma compacta para placa con extremos longitudinales apoyados:
-    # K_G_strip = N_x · b/(420·L) · [matriz polinómica conocida]
-    # Implementación de la matriz consistente (Schafer 2008, Eq. 26):
     Nx = sigma_x * thickness  # fuerza por unidad de longitud
     b = width
     L = length
 
-    # Bloque de flexión transversal w (4×4) — sólo placa.
+    # Bloque de flexión transversal w (4×4) — Hermite cúbico.
     kg_w = (Nx * b / (420.0 * L)) * np.array([
         [156.0,  22.0 * b,   54.0, -13.0 * b],
         [ 22.0 * b,   4.0 * b * b,  13.0 * b, -3.0 * b * b],
@@ -130,25 +127,32 @@ def strip_geometric_stiffness(width: float, length: float,
         [-13.0 * b, -3.0 * b * b, -22.0 * b,   4.0 * b * b],
     ])
 
-    # Bloque de membrana (u, v) — para esta simplificación no aporta a la
-    # inestabilidad fuera-del-plano dominante; se deja como cero.
-    kg_uv = np.zeros((4, 4))
+    # Bloque de membrana (u_i, v_i, u_j, v_j) con funciones de forma lineales (1 - y/b, y/b):
+    if include_membrane:
+        kg_uv = (Nx * b / (6.0 * L)) * np.array([
+            [2.0, 0.0, 1.0, 0.0],
+            [0.0, 2.0, 0.0, 1.0],
+            [1.0, 0.0, 2.0, 0.0],
+            [0.0, 1.0, 0.0, 2.0],
+        ])
+    else:
+        kg_uv = np.zeros((4, 4))
 
     n = 2 * n_dof_per_node  # 8
     KG = np.zeros((n, n))
     KG[:4, :4] = kg_w
-    KG[4:, 4:] = kg_uv
+    if n >= 8:
+        KG[4:8, 4:8] = kg_uv
     return KG
 
 
 # ----------------------------------------------------------------------
-# Solver de auto-valor de pandeo (placeholder — interfaz lista para el
-# ensamblado global futuro)
+# Solver de autovalor de pandeo
 # ----------------------------------------------------------------------
 
 def solve_buckling_eigenvalue(K_E: np.ndarray, K_G: np.ndarray
                               ) -> tuple[float, np.ndarray]:
-    """Resuelve ``(K_E - λ·K_G)·φ = 0`` y devuelve el menor positivo.
+    """Resuelve ``(K_E - λ·K_G)·φ = 0`` y devuelve el menor autovalor positivo.
 
     Args:
         K_E: matriz de rigidez elástica.
@@ -170,7 +174,7 @@ def solve_buckling_eigenvalue(K_E: np.ndarray, K_G: np.ndarray
 
 
 # ----------------------------------------------------------------------
-# Clase fachada (compat con la semilla original)
+# Clase fachada
 # ----------------------------------------------------------------------
 
 class FiniteStripMethod:
@@ -209,11 +213,3 @@ __all__ = [
     "solve_buckling_eigenvalue",
     "FiniteStripMethod",
 ]
-
-
-# TODO (FSM completo):
-#   1. Ensamblar K_E global a partir de las franjas y la conectividad
-#      nodal (Schafer 2008, Apéndice A).
-#   2. Generar la curva σ_cr vs half-wavelength para identificar modos
-#      Local / Distorsional / Global (signature curve de Schafer).
-#   3. Wire al Direct Strength Method para producir P_n directamente.

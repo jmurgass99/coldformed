@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from coldformed.fsm_master_seed import FiniteStripMethodSeed
 
@@ -24,4 +25,6 @@ def test_geometric_stiffness_matrix_shape():
     fsm = FiniteStripMethodSeed()
     K_G = fsm.build_geometric_stiffness_matrix([0.0, 50.0, 100.0])
     assert K_G.shape == (4, 4)
-    assert np.allclose(K_G, np.eye(4))
+    assert np.allclose(K_G, K_G.T)
+    # Para b=100, L=100, t=1, sigma_x=1 -> K_G[0,0] = 156 * 100 / (420 * 100) = 156/420
+    assert K_G[0, 0] == pytest.approx(156.0 / 420.0)

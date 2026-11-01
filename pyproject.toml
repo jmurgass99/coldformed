@@ -53,6 +53,9 @@ Issues = "https://github.com/jmurgass99/coldformed/issues"
 [tool.setuptools.packages.find]
 include = ["coldformed*"]
 
+[tool.setuptools.package-data]
+coldformed = ["py.typed"]
+
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra --strict-markers"
