@@ -7,7 +7,7 @@
     "dev": "vite --open",
     "build": "vite build",
     "preview": "vite preview --open",
-    "test": "vitest run",
+    "test": "node src/__tests__/coldformedWeb.test.ts",
     "build:wasm": "emcc ./src/solver/cpp/fsmKernel.cpp -o ./src/solver/cpp/built/fsmKernel.wasm -O3 -s STANDALONE_WASM --no-entry -s EXPORTED_FUNCTIONS=_plateBucklingStress,_winterRhoUnchecked"
   },
   "dependencies": {

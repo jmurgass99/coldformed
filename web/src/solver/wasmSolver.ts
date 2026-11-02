@@ -1,4 +1,4 @@
-import type { FsmSignatureResult } from "../data-model";
+import type { FsmSignatureResult } from "../data-model.ts";
 
 const FSM_WASM_BASE64 =
   "AGFzbQEAAAABDgJgBHx8fHwBfGABfAF8AwMCAAEHLAITcGxhdGVCdWNrbGluZ1N0cmVzcwAAEndpbnRlclJob1VuY2hlY2tlZAABCjQCHQBEf3OyywLs7D8gA6IgAKIgASABoqIgAiACoqMLFAAgAEQpXI/C9SjMP6EgACAAoqML";

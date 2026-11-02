@@ -1,26 +1,27 @@
-import { describe, expect, it } from "vitest";
-import { getStripMesh } from "../mesh/getMesh";
-import { initFsmWasm, solveFsmSignatureWasm } from "../solver/wasmSolver";
+import assert from "node:assert/strict";
+import { getStripMesh } from "../mesh/getMesh.ts";
+import { initFsmWasm, solveFsmSignatureWasm } from "../solver/wasmSolver.ts";
 
-describe("ColdFormed Web — StripGeometryMapping + fsmKernel.wasm", () => {
-  it("subdivides lipped C-section walls preserving cornerToNodes and wallToStrips", () => {
-    const m = getStripMesh(200, 75, 20, 2.0, 4);
-    expect(m.strips.length).toBe(20);
-    expect(m.nodesYZ.length).toBe(21);
-    expect(m.geometryMapping.wallToStrips.get("web")?.length).toBe(4);
-  });
+// 1. Strip geometry mapping
+const m = getStripMesh(200, 75, 20, 2.0, 4);
+assert.equal(m.strips.length, 20);
+assert.equal(m.nodesYZ.length, 21);
+assert.equal(m.geometryMapping.wallToStrips.get("web")?.length, 4);
 
-  it("computes plate buckling stress and Winter effective width factor in WebAssembly", async () => {
-    await initFsmWasm();
-    const res = solveFsmSignatureWasm({
-      hMm: 200,
-      bMm: 75,
-      cLipMm: 20,
-      tMm: 2.0,
-      fyMPa: 355,
-    });
-    expect(res.sigmaCrLocalMPa).toBeGreaterThan(50);
-    expect(res.rhoWeb).toBeLessThan(1.0);
-    expect(res.bucklingFactors.length).toBe(40);
-  });
+// 2. FSM signature curve in WASM
+await initFsmWasm();
+const res = solveFsmSignatureWasm({
+  hMm: 200,
+  bMm: 75,
+  cLipMm: 20,
+  tMm: 2.0,
+  fyMPa: 355,
 });
+
+assert.ok(res.sigmaCrLocalMPa > 50);
+assert.ok(res.rhoWeb < 1.0);
+assert.equal(res.bucklingFactors.length, 40);
+
+console.log(
+  `ColdFormed WASM test OK: sigma_cr_local=${res.sigmaCrLocalMPa.toFixed(1)} MPa, rho_web=${res.rhoWeb.toFixed(3)}`
+);

@@ -1,4 +1,4 @@
-import type { StripMesh } from "../data-model";
+import type { StripMesh } from "../data-model.ts";
 
 export function getStripMesh(
   hMm: number,
