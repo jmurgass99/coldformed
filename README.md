@@ -18,12 +18,11 @@ Tienes una correa, un montante o una viga armada de chapa delgada y necesitas sa
 - tengas las cargas o momentos críticos elásticos (de CUFSM, de la curva de franjas finitas del paquete o del Apéndice 2) y quieras la resistencia por el Método de la Resistencia Directa;
 - diseñes correas C o Z y necesites el pandeo distorsional por AISI y por Eurocódigo, con sus límites de aplicabilidad;
 - quieras la tensión crítica de una placa aislada (cuatro condiciones de borde) o verificar el ensamblado de franjas finitas contra la solución cerrada;
-- compruebes cortante del alma (AISI §G2), abolladura en apoyos (§G5), interacción (§H1), torsión de Saint-Venant o reducción por huecos.
+- compruebes cortante del alma (AISI §G2 o EN 1993-1-3 §6.1.5), abolladura en apoyos (§G5), interacción (§H1), torsión de Saint-Venant o reducción por huecos.
 
 **No lo uses para**
 
 - obtener esfuerzos: no hay análisis de barras ni de cargas;
-- cortante del alma por EN 1993-1-3 §6.1.5: solo está AISI §G2;
 - modos distorsional y global desde la curva de franjas finitas: el ensamblado actual reproduce el modo local y no muestra el mínimo distorsional ni el aplanamiento global (ver limitaciones); para σ_crd usa el Apéndice 2 y para el global, Euler o tu programa;
 - perfiles Σ, omega o sombrero en los módulos distorsionales: cubren C y Z con labio simple;
 - pandeo lateral-torsional de la correa (M_cre): se pasa como dato.
@@ -35,7 +34,7 @@ pip install git+https://github.com/jmurgass99/coldformed.git
 pip install "coldformed[api,ml] @ git+https://github.com/jmurgass99/coldformed.git"   # API REST y metamodelo scikit-learn
 ```
 
-Dependencias: `numpy`, `scipy`, `numba` y `sectionproperties`. Para desarrollo: `git clone`, `pip install -e ".[test,api,ml]"`, `pytest -q` (27 ficheros de tests). En Windows, si la consola no es UTF-8, ejecuta los ejemplos con `python -X utf8 examples/<nombre>.py`.
+Dependencias: `numpy`, `scipy`, `numba` y `sectionproperties`. Para desarrollo: `git clone`, `pip install -e ".[test,api,ml]"`, `pytest -q` (29 ficheros de tests). En Windows, si la consola no es UTF-8, ejecuta los ejemplos con `python -X utf8 examples/<nombre>.py`.
 
 ## Capacidades
 
@@ -45,7 +44,7 @@ Dependencias: `numpy`, `scipy`, `numba` y `sectionproperties`. Para desarrollo: 
 | Método de la Resistencia Directa en flexión y compresión, factores φ/γ y despacho por norma (US, CO, AU, EU, SG) | `direct_strength`, `codes_multi` | AISI S100-16/22 §E2–E4, §F2–F4; AS/NZS 4600; NSR-10 F.4; EN 1993-1-3 | [5 casos](#2-método-de-la-resistencia-directa-y-despacho-multinorma) |
 | Pandeo distorsional de C y Z: σ_crd y L_cr por Apéndice 2 (compresión y flexión), rigidizador de borde con muelle K y χ_d, límites de aplicabilidad | `distortional` | AISI S100-16 Apéndice 2 §2.3.1.3 y §2.3.3.3, Tabla B4.1-1; EN 1993-1-3 §5.5.3, Tabla 5.1 | [5 casos](#3-pandeo-distorsional-de-perfiles-c-y-z) |
 | Pandeo local de placa: Bryan con cuatro condiciones de borde, franjas finitas con kernel Numba y curva de firma, metamodelo | `fsm`, `local_buckling`, `fsm_jit`, `fsm_assembly`, `signature_curve`, `surrogates` | Timoshenko & Gere §9.3; Schafer 2008 (CUFSM); Cheung 1976 | [5 casos](#4-pandeo-local-de-placa-y-franjas-finitas) |
-| Comprobaciones complementarias: cortante del alma, abolladura en apoyos, interacción M-V y P-M, torsión de secciones abiertas, huecos, galvanizado | `shear`, `web_crippling`, `interaction`, `torsion_open`, `perforations`, `galvanizing` | AISI S100-16 §G2, §G5, §H1, §1.1.2; EN 1993-1-3 §10; EN ISO 1461 | [5 casos](#5-comprobaciones-complementarias-aisi-s100) |
+| Comprobaciones complementarias: cortante del alma, abolladura en apoyos, interacción M-V y P-M, torsión de secciones abiertas, huecos, galvanizado | `shear`, `web_crippling`, `interaction`, `torsion_open`, `perforations`, `galvanizing` | AISI S100-16 §G2, EN 1993-1-3 §6.1.5, §G5, §H1, §1.1.2; EN 1993-1-3 §10; EN ISO 1461 | [5 casos](#5-comprobaciones-complementarias-aisi-s100) |
 | Catálogo de perfiles, propiedades con `sectionproperties`, coste y CO₂, polígono para SAP2000 y API REST | `profile_catalog`, `sectprops_wrapper`, `cost_estimator`, `sap_section_bridge`, `api` | — | [4 casos](#6-catálogo-propiedades-de-sección-coste-exportación-y-api) |
 
 Los 30 scripts de `examples/` se ejecutaron en un entorno limpio antes de publicarse; su salida está en `examples/output/` y es la que se reproduce aquí.
@@ -140,6 +139,9 @@ Cajón b = 400 mm, h = 1000 mm, S355 (ε = 0.814, límites Clase 3: alma 100.9, 
    12.0    83.3   33.3      3       6545.1
    15.0    66.7   26.7      3       8103.5
    20.0    50.0   20.0      3      10633.4
+t_f =  8.0, t_w =  8.0 mm → clase 4, W_eff =   2207.5 cm³
+t_f = 15.0, t_w =  8.0 mm → clase 4, W_eff =   4471.8 cm³
+t_f =  8.0, t_w = 12.0 mm → clase 4, W_eff =   4224.3 cm³
 
 Servicio evaluate_section (t = 8 mm): {'section_class': 4, 'epsilon': 0.813617, 'w_eff_cm3': 2207.49}
 Entrada inválida (t = 0): GeometryError: t debe ser > 0 (recibido 0.0)
@@ -595,7 +597,7 @@ Holdout: R² = 0.9718, MAE = 155.54 MPa (n_train = 1500, n_test = 500)
 
 ### 5. Comprobaciones complementarias (AISI S100)
 
-#### Cortante del alma (§G2): fluencia, pandeo inelástico y elástico
+#### Cortante del alma: AISI §G2 (fluencia, pandeo inelástico y elástico) frente a EN 1993-1-3 §6.1.5
 
 <details><summary>Salida real de <code>python examples/web_shear_capacity_aisi_g2_regimes.py</code></summary>
 
@@ -611,6 +613,16 @@ h [mm]    h/t  V_y [kN]  V_cr [kN]    λ_v  V_n [kN]  régimen
    400    267    126.00       8.27  3.904      8.27  pandeo elastico
 
 Con rigidizadores transversales k_v sube y el alma esbelta recupera cortante: pasa k_v en ShearInput.
+
+EN 1993-1-3 §6.1.5 (alma recta, sin rigidizador en apoyo, γ_M0 = 1) frente a AISI V_n:
+h [mm]    λ_w f_bv [MPa] V_b,Rd [kN]  AISI V_n EC3/AISI  régimen EC3
+   100  0.942      178.4       26.76     26.30     1.02  abolladura inelastica (0.83 < lambda_w < 1.40)
+   150  1.413      117.5       26.44     22.04     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   200  1.883       66.1       19.83     16.53     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   250  2.354       42.3       15.87     13.23     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   300  2.825       29.4       13.22     11.02     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   400  3.767       16.5        9.92      8.27     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+A mano, h = 400 mm: λ_w = 3.767, f_bv = 16.5 MPa, V_b,Rd = 400·1.5·f_bv = 9.92 kN
 ```
 
 </details>
@@ -810,10 +822,10 @@ t negativo → 422 (validación de entrada)
 
 ## Limitaciones
 
-- `fsm_assembly.compute_signature_curve_fsm` solo reproduce el modo local: para una C con labios no aparece el mínimo distorsional y a longitudes largas σ_cr crece en vez de aplanarse hacia Euler. Usa el Apéndice 2 para σ_crd y Euler para el global.
+- `fsm_assembly.compute_signature_curve_fsm` solo reproduce el modo local: para una C con labios no aparece el mínimo distorsional y a longitudes largas σ_cr crece en vez de aplanarse hacia Euler. Usa el Apéndice 2 para σ_crd y Euler para el global. El bloque de rigidez geométrica de membrana (`include_membrane_kg`, 6e04739) existe en el ensamblado interno, pero `compute_signature_curve_fsm` no lo expone.
 - `distortional` cubre C y Z con labio simple a 90°; en flexión se asume ξ_web = 2 (flexión pura). Las dimensiones de línea media se toman como b − t y c − t/2.
-- `shear` implementa solo AISI §G2; no hay V_b,Rd de EN 1993-1-3.
-- `Class4Section` idealiza el cajón o la I con un espesor único y ψ fijos (−1 alma, +1 ala); es una aproximación, no un cálculo de sección eficaz completo.
+- `shear` tiene AISI §G2 (`shear_capacity`) y EN 1993-1-3 §6.1.5 (`shear_capacity_ec3`, alma sin rigidizadores longitudinales, Ec. 6.10a); no hay interacción con el aplastamiento local.
+- `Class4Section` idealiza el cajón o la I con espesores de ala y alma (`t_f`, `t_w`, por defecto `t`) y ψ fijos (−1 alma, +1 ala); es una aproximación, no un cálculo de sección eficaz completo.
 - `signature_curve` (módulo analítico) es una placa aislada: sus etiquetas «Distortional» y «Global» son regiones de λ, no modos de una sección.
 - `web_crippling` incluye cinco conjuntos representativos de coeficientes de la Tabla G5-1, no las cinco tablas completas.
 - `perforations`, `galvanizing` y `cost_estimator` son reglas simplificadas y tarifas orientativas.

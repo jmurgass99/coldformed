@@ -18,12 +18,11 @@ You have a purlin, a stud or a thin-plate girder and need to know how much of th
 - you have the elastic critical loads or moments (from CUFSM, from the package's finite-strip curve or from Appendix 2) and want the resistance by the Direct Strength Method;
 - you design C or Z purlins and need distortional buckling by AISI and by Eurocode, with their applicability limits;
 - you want the critical stress of an isolated plate (four boundary conditions) or to check the finite-strip assembly against the closed-form solution;
-- you check web shear (AISI §G2), web crippling at supports (§G5), interaction (§H1), Saint-Venant torsion or the reduction for holes.
+- you check web shear (AISI §G2 or EN 1993-1-3 §6.1.5), web crippling at supports (§G5), interaction (§H1), Saint-Venant torsion or the reduction for holes.
 
 **Don't use it for**
 
 - obtaining internal forces: there is no frame or load analysis;
-- web shear to EN 1993-1-3 §6.1.5: only AISI §G2 is available;
 - distortional and global modes from the finite-strip curve: the current assembly reproduces the local mode and shows neither the distortional minimum nor the global flattening (see limitations); for σ_crd use Appendix 2 and for the global mode, Euler or your own program;
 - Σ, omega or hat sections in the distortional modules: they cover C and Z with a simple lip;
 - lateral-torsional buckling of the purlin (M_cre): it is passed as input.
@@ -35,7 +34,7 @@ pip install git+https://github.com/jmurgass99/coldformed.git
 pip install "coldformed[api,ml] @ git+https://github.com/jmurgass99/coldformed.git"   # REST API and scikit-learn surrogate
 ```
 
-Dependencies: `numpy`, `scipy`, `numba` and `sectionproperties`. For development: `git clone`, `pip install -e ".[test,api,ml]"`, `pytest -q` (27 test files). On Windows, if the console is not UTF-8, run the examples with `python -X utf8 examples/<name>.py`.
+Dependencies: `numpy`, `scipy`, `numba` and `sectionproperties`. For development: `git clone`, `pip install -e ".[test,api,ml]"`, `pytest -q` (29 test files). On Windows, if the console is not UTF-8, run the examples with `python -X utf8 examples/<name>.py`.
 
 ## Capabilities
 
@@ -45,7 +44,7 @@ Dependencies: `numpy`, `scipy`, `numba` and `sectionproperties`. For development
 | Direct Strength Method in bending and compression, φ/γ factors and dispatch by code (US, CO, AU, EU, SG) | `direct_strength`, `codes_multi` | AISI S100-16/22 §E2–E4, §F2–F4; AS/NZS 4600; NSR-10 F.4; EN 1993-1-3 | [5 cases](#2-direct-strength-method-and-multi-code-dispatch) |
 | Distortional buckling of C and Z: σ_crd and L_cr by Appendix 2 (compression and bending), edge stiffener with spring K and χ_d, applicability limits | `distortional` | AISI S100-16 Appendix 2 §2.3.1.3 and §2.3.3.3, Table B4.1-1; EN 1993-1-3 §5.5.3, Table 5.1 | [5 cases](#3-distortional-buckling-of-c-and-z-sections) |
 | Local plate buckling: Bryan with four boundary conditions, finite strips with a Numba kernel and signature curve, surrogate model | `fsm`, `local_buckling`, `fsm_jit`, `fsm_assembly`, `signature_curve`, `surrogates` | Timoshenko & Gere §9.3; Schafer 2008 (CUFSM); Cheung 1976 | [5 cases](#4-local-plate-buckling-and-finite-strips) |
-| Complementary checks: web shear, web crippling at supports, M-V and P-M interaction, torsion of open sections, holes, galvanizing | `shear`, `web_crippling`, `interaction`, `torsion_open`, `perforations`, `galvanizing` | AISI S100-16 §G2, §G5, §H1, §1.1.2; EN 1993-1-3 §10; EN ISO 1461 | [5 cases](#5-complementary-checks-aisi-s100) |
+| Complementary checks: web shear, web crippling at supports, M-V and P-M interaction, torsion of open sections, holes, galvanizing | `shear`, `web_crippling`, `interaction`, `torsion_open`, `perforations`, `galvanizing` | AISI S100-16 §G2, EN 1993-1-3 §6.1.5, §G5, §H1, §1.1.2; EN 1993-1-3 §10; EN ISO 1461 | [5 cases](#5-complementary-checks-aisi-s100) |
 | Section catalogue, properties with `sectionproperties`, cost and CO₂, polygon for SAP2000 and REST API | `profile_catalog`, `sectprops_wrapper`, `cost_estimator`, `sap_section_bridge`, `api` | — | [4 cases](#6-catalogue-section-properties-cost-export-and-api) |
 
 The 30 scripts in `examples/` were run in a clean environment before publishing; their output is in `examples/output/` and is what is reproduced here.
@@ -142,6 +141,9 @@ Cajón b = 400 mm, h = 1000 mm, S355 (ε = 0.814, límites Clase 3: alma 100.9, 
    12.0    83.3   33.3      3       6545.1
    15.0    66.7   26.7      3       8103.5
    20.0    50.0   20.0      3      10633.4
+t_f =  8.0, t_w =  8.0 mm → clase 4, W_eff =   2207.5 cm³
+t_f = 15.0, t_w =  8.0 mm → clase 4, W_eff =   4471.8 cm³
+t_f =  8.0, t_w = 12.0 mm → clase 4, W_eff =   4224.3 cm³
 
 Servicio evaluate_section (t = 8 mm): {'section_class': 4, 'epsilon': 0.813617, 'w_eff_cm3': 2207.49}
 Entrada inválida (t = 0): GeometryError: t debe ser > 0 (recibido 0.0)
@@ -597,7 +599,7 @@ Holdout: R² = 0.9718, MAE = 155.54 MPa (n_train = 1500, n_test = 500)
 
 ### 5. Complementary checks (AISI S100)
 
-#### Web shear (§G2): yielding, inelastic and elastic buckling
+#### Web shear: AISI §G2 (yielding, inelastic and elastic buckling) against EN 1993-1-3 §6.1.5
 
 <details><summary>Actual output of <code>python examples/web_shear_capacity_aisi_g2_regimes.py</code></summary>
 
@@ -613,6 +615,16 @@ h [mm]    h/t  V_y [kN]  V_cr [kN]    λ_v  V_n [kN]  régimen
    400    267    126.00       8.27  3.904      8.27  pandeo elastico
 
 Con rigidizadores transversales k_v sube y el alma esbelta recupera cortante: pasa k_v en ShearInput.
+
+EN 1993-1-3 §6.1.5 (alma recta, sin rigidizador en apoyo, γ_M0 = 1) frente a AISI V_n:
+h [mm]    λ_w f_bv [MPa] V_b,Rd [kN]  AISI V_n EC3/AISI  régimen EC3
+   100  0.942      178.4       26.76     26.30     1.02  abolladura inelastica (0.83 < lambda_w < 1.40)
+   150  1.413      117.5       26.44     22.04     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   200  1.883       66.1       19.83     16.53     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   250  2.354       42.3       15.87     13.23     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   300  2.825       29.4       13.22     11.02     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+   400  3.767       16.5        9.92      8.27     1.20  abolladura elastica sin rigidizador en apoyo (lambda_w >= 1.40)
+A mano, h = 400 mm: λ_w = 3.767, f_bv = 16.5 MPa, V_b,Rd = 400·1.5·f_bv = 9.92 kN
 ```
 
 </details>
@@ -812,10 +824,10 @@ t negativo → 422 (validación de entrada)
 
 ## Limitations
 
-- `fsm_assembly.compute_signature_curve_fsm` only reproduces the local mode: for a lipped C the distortional minimum does not appear, and at long lengths σ_cr grows instead of flattening towards Euler. Use Appendix 2 for σ_crd and Euler for the global mode.
+- `fsm_assembly.compute_signature_curve_fsm` only reproduces the local mode: for a lipped C the distortional minimum does not appear, and at long lengths σ_cr grows instead of flattening towards Euler. Use Appendix 2 for σ_crd and Euler for the global mode. The membrane geometric stiffness block (`include_membrane_kg`, 6e04739) exists in the internal assembly, but `compute_signature_curve_fsm` does not expose it.
 - `distortional` covers C and Z with a simple 90° lip; in bending ξ_web = 2 (pure bending) is assumed. Centreline dimensions are taken as b − t and c − t/2.
-- `shear` implements only AISI §G2; there is no V_b,Rd from EN 1993-1-3.
-- `Class4Section` idealises the box or the I with a single thickness and fixed ψ (−1 web, +1 flange); it is an approximation, not a full effective section calculation.
+- `shear` has AISI §G2 (`shear_capacity`) and EN 1993-1-3 §6.1.5 (`shear_capacity_ec3`, web without longitudinal stiffeners, Eq. 6.10a); there is no interaction with web crippling.
+- `Class4Section` idealises the box or the I with flange and web thicknesses (`t_f`, `t_w`, `t` by default) and fixed ψ (−1 web, +1 flange); it is an approximation, not a full effective section calculation.
 - `signature_curve` (analytical module) is an isolated plate: its «Distortional» and «Global» labels are λ regions, not modes of a section.
 - `web_crippling` includes five representative sets of coefficients from Table G5-1, not the five full tables.
 - `perforations`, `galvanizing` and `cost_estimator` are simplified rules and indicative rates.
