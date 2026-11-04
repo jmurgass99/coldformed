@@ -1,9 +1,0 @@
-país      USD/t ef.  peso [kg]  total USD   t CO₂
-CL             2428       7920      19231   17.42
-CO             2494       7920      19750   17.42
-US             2034       7920      16112   14.26
-EU             2231       7920      17672   12.67
-AU             2691       7920      21310   15.05
-SG             2297       7920      18191   14.26
-
-Mismo pedido en perfil Σ (EU): 21445 USD (2.410 USD/kg)
