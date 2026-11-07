@@ -1,9 +1,0 @@
-Canal 200x75x2.5: J = 1822.9 mm⁴, C_w = 3.139e+09 mm⁶
- T [N·m]  τ_sv [MPa]  frente a 0,6·f_y = 210 MPa
-      25        34.3  OK
-      50        68.6  OK
-     100       137.1  OK
-     150       205.7  OK
-     250       342.9  NO
-
-Con J tan bajo, cargas fuera del centro de esfuerzos cortantes deben resistirse por alabeo o evitarse con arriostramiento: este chequeo solo acota la componente de Saint-Venant.
